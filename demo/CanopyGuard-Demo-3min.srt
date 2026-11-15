@@ -1,0 +1,71 @@
+1
+00:00:00,000 --> 00:00:05,251
+A single 5-ft weather station can say “looks OK” while the air above the orchard says stop.
+
+2
+00:00:05,251 --> 00:00:14,315
+Hidden-inversion scenario: 5-ft wind 5.0 mph sits inside the 3–10 mph range → the ground-only check reads LOOKS OK.
+
+3
+00:00:14,315 --> 00:00:21,404
+The paired 5 ft + 30 ft tower sees 78.1 °F aloft vs 73.0 °F near the ground — an inversion → STOP.
+
+4
+00:00:21,404 --> 00:00:32,820
+ΔT +5.1 °F (30 ft − 5 ft), 4.5 mph speed shear, 52° direction shift. Every STOP lists its reasons.
+
+5
+00:00:32,820 --> 00:00:41,380
+Live-linked to the same readings: warm layer aloft, 5-ft and 30-ft wind arrows pointing downwind (readings are FROM).
+
+6
+00:00:41,380 --> 00:00:57,886
+Drag to orbit, zoom, pause. Tracers explain stratification only — they are not spray, drift or concentration.
+
+7
+00:00:57,886 --> 00:01:05,630
+Sectors show where each height’s wind blows TOWARD (±29°). Neighboring homes sit in the 30-ft sector.
+
+8
+00:01:05,630 --> 00:01:16,001
+Drag a receptor upwind and its alignment updates instantly — the list and count use the same rule as the map.
+
+9
+00:01:16,001 --> 00:01:27,684
+Schematic only: not a map, plume, distance, exposure or regulatory buffer prediction.
+
+10
+00:01:27,684 --> 00:01:36,878
+A scripted 05:30–09:30 morning. Each frame runs through the same engine as the live dashboard.
+
+11
+00:01:36,878 --> 00:01:46,226
+Watch the verdict change as the inversion erodes — STOP turns to GO when 30 ft is no longer warmer.
+
+12
+00:01:46,226 --> 00:01:57,751
+Pick a frame and apply it to the live dashboard; it is logged with a timestamp. Synthetic — not a forecast.
+
+13
+00:01:57,751 --> 00:02:04,510
+40/40 labeled synthetic rule checks pass in the browser — the same engine file the Node regression suite runs.
+
+14
+00:02:04,510 --> 00:02:20,010
+21 constructed cases hide a caution or stop from a ground-only wind screen. Constructed examples — not field accuracy.
+
+15
+00:02:20,010 --> 00:02:32,309
+Load any case: the live dashboard, twin and log update together.
+
+16
+00:02:32,309 --> 00:02:37,341
+Every decision is timestamped with its readings, reasons and data source — scenarios, replay and benchmark loads included.
+
+17
+00:02:37,341 --> 00:02:43,688
+CSV / JSON export in UTC. Local records — not a regulatory or tamper-evident record.
+
+18
+00:02:43,688 --> 00:02:50,004
+See the inversion a ground station misses — explained, logged, exportable. Weather screening only; labels and on-site checks still govern.

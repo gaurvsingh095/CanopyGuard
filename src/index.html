@@ -1,0 +1,941 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#10261e" />
+    <meta name="description" content="CanopyGuard — multi-height orchard spray drift decision support." />
+    <title>CanopyGuard — Orchard Drift Intelligence</title>
+    <meta name="canopyguard-version" content="__CG_VERSION__+__CG_BUILD__" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='8' fill='%23c5ef74'/%3E%3Cpath d='M14 24V7M14 12C9 10 7 6 7 3c6 1 9 4 7 9ZM14 16c4-6 8-7 12-6-1 7-6 9-12 9' stroke='%23152d22' stroke-width='2.5' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E" />
+    <style>
+      /*@inline css/base.css*/
+    </style>
+    <style>
+      /*@inline css/enhancements.css*/
+    </style>
+  </head>
+  <body>
+    <a class="skipLink" href="#pageTitle">Skip to content</a>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="logo">
+          <div class="mark">
+            <svg width="25" height="25" viewBox="0 0 28 28" fill="none">
+              <path
+                d="M14 24V7M14 12C9 10 7 6 7 3c6 1 9 4 7 9ZM14 16c4-6 8-7 12-6-1 7-6 9-12 9"
+                stroke="#152d22"
+                stroke-width="2.5"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="brand">canopyguard<small>DRIFT INTELLIGENCE</small></div>
+        </div>
+        <p class="navtitle">FIELD COMMAND</p>
+        <div class="nav" id="nav">
+          <button class="navbtn active" data-page="overview">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="8" height="8" rx="2" />
+              <rect x="14" y="3" width="7" height="5" rx="2" />
+              <rect x="14" y="11" width="7" height="10" rx="2" />
+              <rect x="3" y="14" width="8" height="7" rx="2" />
+            </svg>
+            Overview</button
+          ><button class="navbtn" data-page="lab">
+            <svg viewBox="0 0 24 24"><path d="M6 20V9m6 11V4m6 16v-7M3 20h18" /></svg> Weather lab</button
+          ><button class="navbtn" data-page="planner">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M7 3v4m10-4v4M3 10h18" />
+            </svg>
+            Window planner</button
+          ><button class="navbtn" data-page="log">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 4h12v16H5V7m0-3v5h5" />
+              <path d="M9 12h7m-7 4h7" />
+            </svg>
+            Decision log</button
+          ><button class="navbtn" data-page="science">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v6m0-10v1" />
+            </svg>
+            Science & limits
+          </button>
+        </div>
+        <div class="sidebarBottom">
+          <div class="smallwhite">
+            <span class="sensorPulse"></span><span id="sourceTitle">Simulated readings</span>
+          </div>
+          <div class="mutedwhite">Two-height orchard intelligence</div>
+          <div class="sidebarFoot">
+            HACK ARIZONA AgX · 2026<br />Prototype / decision support only<br />Not a pesticide-label clearance<br /><span class="buildTag">v__CG_VERSION__ · build __CG_BUILD__</span>
+          </div>
+        </div>
+      </aside>
+      <div class="navScrim" id="navScrim" aria-hidden="true"></div>
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <button class="button light mobileMenu" id="menuBtn" aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false">☰ Menu</button>
+            <div class="eyebrow">ORCHARD OPERATIONS / BLOCK A-07</div>
+            <h1 id="pageTitle" tabindex="-1">Spray decision overview</h1>
+            <p>
+              Fresno County, California <span style="padding: 0 7px">·</span> Five-foot and thirty-foot sensor tower
+            </p>
+          </div>
+          <div class="topRight">
+            <span class="pill"><span class="dot"></span><span id="sourcePill">SIMULATED READINGS</span></span
+            ><span class="pill" id="nowTime" title="Your local time">--:--</span
+            ><button class="button dark" id="captureTop">↗ Record decision</button>
+          </div>
+        </header>
+        <section id="overview" class="contentPage active">
+          <div class="v2-intro">
+            <div>
+              <div class="v2-kicker">NEW IN CANOPYGUARD 2.0 · ORCHARD ATMOSPHERE INTELLIGENCE</div>
+              <h2>From invisible risk to visible evidence.</h2>
+              <p>
+                Explore the atmosphere in 3D, check wind direction against nearby sensitive areas, and replay exactly
+                when the conditions change.
+              </p>
+            </div>
+            <div class="v2-actions">
+              <button class="v2-btn" data-v2page="twin">◈ Explore digital twin</button
+              ><button class="v2-btn secondary" data-v2page="validation">✓ View 40 test cases</button>
+            </div>
+          </div>
+          <div class="grid">
+            <div>
+              <div class="card hero">
+                <div class="heroGlow"></div>
+                <div class="heroContent">
+                  <div class="heroTop"><span class="liveDot"></span> MULTI-HEIGHT WEATHER ASSESSMENT</div>
+                  <div>
+                    <div class="status stop" id="statusMain">STOP</div>
+                    <div class="statusSub" id="statusSubtitle">Temperature inversion detected</div>
+                    <p class="heroText" id="statusExplain">
+                      Air above the orchard is warmer than air near the ground, which can trap fine spray droplets and
+                      carry them sideways.
+                    </p>
+                  </div>
+                  <div class="heroBottom">◉ Weather-only decision · product label and on-site checks required</div>
+                </div>
+                <div class="heroArt">
+                  <svg
+                    viewBox="0 0 360 300"
+                    preserveAspectRatio="xMidYMax meet"
+                    aria-label="Orchard cross-section illustration"
+                  >
+                    <defs>
+                      <linearGradient id="layer" x1="0" y1="0" x2="0" y2="1">
+                        <stop stop-color="#da7665" stop-opacity=".38" />
+                        <stop offset="1" stop-color="#f7b98f" stop-opacity=".02" />
+                      </linearGradient>
+                    </defs>
+                    <path id="heroLayer" d="M5 94Q162 65 357 89V217H0Z" fill="url(#layer)" />
+                    <g stroke="#70ab84" stroke-width="1.1" opacity=".5">
+                      <path d="M24 95Q60 108 102 90" />
+                      <path d="M154 87q65-20 120 1" />
+                      <path d="M12 123q90-10 160-8" />
+                      <path d="M193 119q80-13 148-4" />
+                    </g>
+                    <path d="M0 258Q135 251 360 258V300H0Z" fill="#2e4e37" />
+                    <g fill="#4d8159">
+                      <circle cx="73" cy="224" r="41" />
+                      <circle cx="130" cy="211" r="46" />
+                      <circle cx="228" cy="221" r="46" />
+                      <circle cx="297" cy="215" r="42" />
+                    </g>
+                    <g fill="#69996a">
+                      <circle cx="56" cy="213" r="32" />
+                      <circle cx="117" cy="205" r="37" />
+                      <circle cx="209" cy="212" r="37" />
+                      <circle cx="284" cy="207" r="37" />
+                    </g>
+                    <g stroke="#c5b68b" stroke-width="7">
+                      <path d="M72 300v-71M132 300v-71M226 300v-71M298 300v-71" />
+                    </g>
+                    <path d="M166 260V38" stroke="#d6e9d1" stroke-width="3" />
+                    <path d="M161 44h12M161 218h12" stroke="#d6e9d1" stroke-width="3" />
+                    <g fill="#c5ef74">
+                      <circle cx="166" cy="44" r="6" />
+                      <circle cx="166" cy="217" r="6" />
+                    </g>
+                    <g fill="#e4eddd" font-family="sans-serif" font-size="12" font-weight="bold">
+                      <text x="182" y="49">30 ft</text>
+                      <text x="182" y="220">5 ft</text>
+                    </g>
+                    <g fill="#f9b49b" font-size="12" font-family="sans-serif">
+                      <text x="27" y="77" id="heroLayerLabel">WARM AIR ALOFT</text>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+              <div class="metricstrip">
+                <div class="card metric">
+                  <span>Temperature delta</span><strong id="tempMetric" class="warning">+5.1°F</strong
+                  ><small>30 ft − 5 ft</small>
+                </div>
+                <div class="card metric">
+                  <span>Wind-speed shear</span><strong id="shearMetric">4.5</strong><small>mph across canopy</small>
+                </div>
+                <div class="card metric">
+                  <span>Wind-direction shift</span><strong id="turnMetric">52°</strong><small>shortest angle</small>
+                </div>
+                <div class="card metric">
+                  <span>Active triggers</span><strong id="triggersMetric">2</strong
+                  ><small id="triggerDetail">Requires attention</small>
+                </div>
+              </div>
+              <div class="card cardpad" style="margin-top: 16px">
+                <div class="sectiontitle">
+                  <div>
+                    <h2>The blind spot</h2>
+                    <p>Why a ground-only station can give false reassurance</p>
+                  </div>
+                  <span class="tag">JUDGE DEMO</span>
+                </div>
+                <div class="compare">
+                  <div class="comparePart">
+                    <h3>Conventional station · 5 ft</h3>
+                    <div class="big" id="groundVerdict">LOOKS OK</div>
+                    <p id="groundText">
+                      5.0 mph wind is inside the common 3–10 mph range. Upper-air risk is invisible.
+                    </p>
+                  </div>
+                  <div class="vs">VS</div>
+                  <div class="comparePart our">
+                    <h3>CanopyGuard · 5 + 30 ft</h3>
+                    <div class="big" id="multiVerdict">STOP</div>
+                    <p id="multiText">Inversion and wind shear detected above the orchard canopy.</p>
+                  </div>
+                </div>
+                <div class="signalRow" id="signalRow"></div>
+              </div>
+            </div>
+            <div>
+              <div class="card cardpad">
+                <div class="sectiontitle">
+                  <div>
+                    <h2>Vertical weather profile</h2>
+                    <p>Paired sensors expose hidden layers</p>
+                  </div>
+                  <span class="tag">2 HEIGHTS</span>
+                </div>
+                <div class="tower">
+                  <div class="towerlabel">ORCHARD ATMOSPHERE / PROFILE</div>
+                  <svg viewBox="0 0 450 270" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                        <stop stop-color="#f5d8bd" />
+                        <stop offset="1" stop-color="#f4f8f0" />
+                      </linearGradient>
+                    </defs>
+                    <rect id="profileSky" width="450" height="270" fill="url(#sky)" opacity=".5" />
+                    <g stroke="#bfd8c4" stroke-dasharray="6 7"><path d="M0 59H450M0 184H450" /></g>
+                    <path d="M0 234Q225 222 450 235V270H0" fill="#d9e9c9" />
+                    <g stroke="#4e825e" stroke-width="5"><path d="M90 247v-48M148 250v-52M412 247v-50" /></g>
+                    <g fill="#659674">
+                      <circle cx="90" cy="204" r="25" />
+                      <circle cx="148" cy="206" r="23" />
+                      <circle cx="412" cy="201" r="27" />
+                    </g>
+                    <path d="M229 247V25" stroke="#567e68" stroke-width="4" />
+                    <path d="M221 59H237M221 184H237" stroke="#567e68" stroke-width="3" />
+                    <circle cx="229" cy="59" r="8" fill="#e38b6c" stroke="white" stroke-width="3" />
+                    <circle cx="229" cy="184" r="8" fill="#4b8b72" stroke="white" stroke-width="3" />
+                    <g fill="#44644f" font-family="DM Sans,sans-serif" font-size="11" font-weight="bold">
+                      <text x="20" y="63">30 FT</text>
+                      <text x="20" y="188">5 FT</text>
+                    </g>
+                    <g font-family="DM Sans,sans-serif" font-size="15" font-weight="bold">
+                      <text x="251" y="55" fill="#a55643" id="svgTopTemp">78.1°F</text>
+                      <text x="251" y="181" fill="#377b61" id="svgLowTemp">73.0°F</text>
+                    </g>
+                    <g font-family="DM Sans,sans-serif" font-size="12" font-weight="600">
+                      <text x="251" y="76" fill="#7a5a4f" id="svgTopWind">9.5 mph from 137°</text>
+                      <text x="251" y="202" fill="#3f6b57" id="svgLowWind">5.0 mph from 85°</text>
+                    </g>
+                  </svg>
+                </div>
+                <div class="pair">
+                  <div class="pairCell">
+                    <div class="alt">LOWER · 5 FEET</div>
+                    <div class="val" id="lowerPair">73.0°F</div>
+                    <div class="desc" id="lowerWind">5.0 mph · 85°</div>
+                  </div>
+                  <div class="pairCell">
+                    <div class="alt">UPPER · 30 FEET</div>
+                    <div class="val" id="upperPair">78.1°F</div>
+                    <div class="desc" id="upperWind">9.5 mph · 137°</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card cardpad" style="margin-top: 16px">
+                <div class="sectiontitle">
+                  <div>
+                    <h2>What's driving the decision?</h2>
+                    <p>Plain-language alerts, ranked by severity</p>
+                  </div>
+                </div>
+                <div class="alerts" id="alerts"></div>
+              </div>
+            </div>
+          </div>
+          <div class="grid" style="margin-top: 16px">
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Illustrative temperature trend</h2>
+                  <p>Synthetic 12-sample lead-in ending at the current readings · not stored sensor history</p>
+                </div>
+                <span class="tag">SYNTHETIC</span>
+              </div>
+              <div class="chartWrap">
+                <canvas
+                  id="trendCanvas"
+                  role="img"
+                  aria-label="Simulated recent temperatures at five and thirty feet"
+                ></canvas>
+              </div>
+              <div class="chartFoot">
+                <span class="dotLegend">Upper temperature · 30 ft</span
+                ><span class="dotLegend two">Lower temperature · 5 ft</span><span>5-minute steps · illustrative</span>
+              </div>
+            </div>
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Run the judge demo</h2>
+                  <p>One click to reveal what the tower detects</p>
+                </div>
+              </div>
+              <div class="scenarios" id="scenarioGrid"></div>
+              <div class="row" style="margin-top: 15px">
+                <span class="footnote" style="margin: 0">Every scenario uses clearly labeled simulated values.</span
+                ><button class="button light" id="simulateShift">Trigger weather shift</button
+                ><button class="button light" id="openLab">Customize ↗</button>
+              </div>
+            </div>
+          </div>
+          <div class="card cardpad" style="margin-top: 16px">
+            <div class="sectiontitle">
+              <div>
+                <h2>Latest audit events</h2>
+                <p>Each assessed sample records its inputs, status and triggers</p>
+              </div>
+              <button class="subtlelink" data-goto="log">View full decision history ↗</button>
+            </div>
+            <div class="scrollTable" id="recentTable" tabindex="0" role="region" aria-label="Latest audit events"></div>
+          </div>
+        </section>
+        <section class="contentPage" id="twin" aria-label="Interactive atmospheric digital twin">
+          <div class="v2-stack">
+            <div class="v2-head">
+              <div>
+                <div class="v2-overline">01 / INSTRUMENTED ORCHARD</div>
+                <h2>See what one weather station misses.</h2>
+                <p>
+                  An interactive, perspective-3D orchard atmosphere built from the two sensor heights. Animated tracers
+                  explain wind direction and stratification—not actual spray concentration.
+                </p>
+              </div>
+              <span class="v2-pill" id="twinState">STOP</span>
+            </div>
+            <div class="v2-toolbar">
+              <button id="scenePlay" class="v2-ctrl" type="button">Ⅱ Pause motion</button
+              ><button id="orbitLeft" class="v2-ctrl" aria-label="Rotate left">↶ Rotate</button
+              ><button id="orbitRight" class="v2-ctrl" aria-label="Rotate right">Rotate ↷</button
+              ><button id="zoomOut" class="v2-ctrl" type="button" aria-label="Zoom out">−</button
+              ><button id="zoomIn" class="v2-ctrl" type="button" aria-label="Zoom in">+</button
+              ><button id="resetOrbit" class="v2-ctrl" type="button">Reset camera</button>
+              <div class="v2-toggles">
+                <label><input type="checkbox" id="toggleLayer" checked /> Thermal layer</label
+                ><label><input type="checkbox" id="toggleTracer" checked /> Airflow tracers</label>
+              </div>
+            </div>
+            <div class="v2-grid">
+              <div class="v2-card v2-pad">
+                <div class="twin-stage">
+                  <canvas
+                    id="twinCanvas"
+                    tabindex="0"
+                    aria-label="Interactive three-dimensional orchard illustration with sensor tower, wind direction arrows pointing downwind, and illustrative tracers. Drag or use arrow keys to rotate; plus and minus to zoom."
+                    role="img"
+                  ></canvas>
+                  <div class="twin-HUD">
+                    <div class="twin-hudBlock">
+                      <small>CANOPY / 30 FT SENSOR</small><b id="twinTempHigh">78.1°F</b
+                      ><span id="twinWindHigh">9.5 mph · from 137°</span>
+                    </div>
+                    <div class="twin-hudBlock">
+                      <small>GROUND / 5 FT SENSOR</small><b id="twinTempLow">73.0°F</b
+                      ><span id="twinWindLow">5.0 mph · from 85°</span>
+                    </div>
+                  </div>
+                  <div class="twin-bottom">
+                    ILLUSTRATIVE AIRFLOW · NOT A SPRAY-DRIFT, DEPOSITION OR CONCENTRATION MODEL · DRAG TO ROTATE · SCROLL OR +/− TO ZOOM
+                  </div>
+                </div>
+                <div class="twin-legend">
+                  <span><i class="low"></i>5-ft wind · arrow points downwind (reading is FROM)</span
+                  ><span><i class="upper"></i>30-ft wind · arrow points downwind (reading is FROM)</span
+                  ><span><i class="p"></i>Illustrative tracer (not spray)</span
+                  ><span>N marker = north (same as Boundary Lens)</span>
+                </div>
+              </div>
+              <div class="v2-stack">
+                <div class="v2-card v2-pad">
+                  <div class="v2-overline">CURRENT TWO-HEIGHT VERDICT</div>
+                  <h3 id="twinVerdict">Temperature inversion detected</h3>
+                  <p id="twinExplanation" class="v2-muted" style="margin-top: 8px"></p>
+                  <ul class="twinReasons" id="twinReasons" aria-label="All active triggers"></ul>
+                  <div class="v2-rule"></div>
+                  <div class="v2-facts">
+                    <div class="v2-fact"><b id="twinDelta">+5.1°F</b><span>TEMPERATURE DIFFERENCE</span></div>
+                    <div class="v2-fact"><b id="twinGap">4.5 mph</b><span>WIND-SPEED DIFFERENCE</span></div>
+                    <div class="v2-fact"><b id="twinTurn">52°</b><span>DIRECTION SHEAR</span></div>
+                    <div class="v2-fact">
+                      <b id="twinInputQuality">SIMULATED INPUTS</b><span>SENSOR PROVENANCE / QUALITY</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="v2-card v2-pad">
+                  <h3>Ground-only vs. two heights</h3>
+                  <div class="v2-comparison" style="margin-top: 15px">
+                    <div class="v2-comparePanel">
+                      <small>5 FT ONLY</small><b id="twinGround">LOOKS OK</b>
+                      <p>Only tests lower wind speed.</p>
+                    </div>
+                    <div class="v2-vs">VS</div>
+                    <div class="v2-comparePanel better">
+                      <small>PAIRED TOWER</small><b id="twinPaired">STOP</b>
+                      <p>Also tests upper temperature & wind.</p>
+                    </div>
+                  </div>
+                  <div class="v2-signal amber" style="margin-top: 12px">
+                    <span>!</span>
+                    <div id="twinBlindSpot">Ground-only station misses the upper-air hazard.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="v2-metricrow">
+              <div class="v2-metric"><small>Sensors</small><b>02</b><em>5 and 30 feet above ground</em></div>
+              <div class="v2-metric"><small>Scene mode</small><b>3D</b><em>Interactive perspective projection</em></div>
+              <div class="v2-metric"><small>Decision method</small><b>Rules</b><em>Explainable · no opaque AI</em></div>
+            </div>
+            <div class="v2-banner">
+              <strong>Scientific honesty:</strong> the sensor values come from the chosen simulation or imported file.
+              The animated particles, layer thickness, virtual orchard, and camera are educational graphics. They must
+              never be read as observed pesticide drift, predicted deposition, or proof of a safe spray window.
+            </div>
+          </div>
+        </section>
+        <section class="contentPage" id="boundary" aria-label="Wind direction and sensitive boundary screening">
+          <div class="v2-stack">
+            <div class="v2-head">
+              <div>
+                <div class="v2-overline">02 / RECEPTOR AWARENESS</div>
+                <h2>Where is the wind pointing?</h2>
+                <p>
+                  An interactive, schematic boundary lens. Drag sensitive-area markers to inspect whether their bearing
+                  overlaps the current directional screening sectors.
+                </p>
+              </div>
+              <span class="v2-pill" id="boundaryState">STOP</span>
+            </div>
+            <div class="v2-toolbar">
+              <span class="v2-pill cream">SCREENING SECTORS: ±29° PER SENSOR</span
+              ><button class="v2-ctrl" id="boundaryReset">↻ Reset layout</button
+              ><button class="v2-ctrl" id="boundaryRefresh">↻ Refresh readings</button
+              ><span class="v2-pill" id="boundaryWind">85° / 137° FROM</span>
+            </div>
+            <div class="v2-grid">
+              <div class="v2-card v2-pad">
+                <div class="boundary-stage">
+                  <svg
+                    id="boundarySVG"
+                    viewBox="0 0 960 630"
+                    role="group"
+                    aria-label="Schematic orchard plot with directional wind screening sectors and draggable nearby sensitive area markers"
+                  ></svg>
+                  <div class="boundary-legend">
+                    <strong>Direction-aware screening</strong><span class="lg5">— 5-ft wind TOWARD sector (±29°)</span
+                    ><br /><span class="lg30">— 30-ft wind TOWARD sector (±29°)</span>
+                  </div>
+                  <div class="boundary-end">SCHEMATIC / NOT A GEOGRAPHIC OR EXPOSURE MAP</div>
+                </div>
+                <p class="v2-smallprint" style="margin-top: 12px">
+                  Orange-green shading indicates an illustrative directional sector, not plume concentration, particle
+                  density, traveled distance, exposure level, or site-specific regulatory buffer. Position, geometry and
+                  scale are synthetic.
+                </p>
+              </div>
+              <div class="v2-stack">
+                <div class="v2-card v2-pad">
+                  <div class="v2-overline">OFF-TARGET SCREENING</div>
+                  <h3>Nearby sensitive areas</h3>
+                  <p class="v2-muted" style="margin-top: 5px">
+                    Move markers on the diagram. Bearing alignment refreshes immediately.
+                  </p>
+                  <div class="v2-rule"></div>
+                  <div id="receptorList"></div>
+                  <div class="v2-rule"></div>
+                  <div class="v2-minirow">
+                    <b>Directionally aligned sectors</b><span id="boundaryAlignment">—</span>
+                  </div>
+                </div>
+                <div class="v2-card v2-pad">
+                  <h3>Does the lower station see it?</h3>
+                  <div class="v2-comparison" style="margin-top: 15px">
+                    <div class="v2-comparePanel">
+                      <small>GROUND WIND ONLY</small><b id="boundaryGround">LOOKS OK</b>
+                    </div>
+                    <div class="v2-vs">VS</div>
+                    <div class="v2-comparePanel better">
+                      <small>VERTICAL SCREEN</small><b id="boundaryPaired">STOP</b>
+                    </div>
+                  </div>
+                  <p id="boundaryDetails" class="v2-muted" style="margin-top: 13px"></p>
+                </div>
+                <div class="v2-signal">
+                  <span>!</span>
+                  <div>
+                    Wind direction is meteorological <strong>FROM</strong>. Directional sectors show where air generally
+                    moves <strong>TOWARD</strong>, but do not determine whether a receptor will be exposed. Confirm
+                    actual geography, topography, equipment, label buffers, and on-site conditions.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="contentPage" id="replay" aria-label="Replay simulated weather event">
+          <div class="v2-stack">
+            <div class="v2-head">
+              <div>
+                <div class="v2-overline">03 / TIME-SERIES FORENSICS</div>
+                <h2>Watch an inversion evolve.</h2>
+                <p>
+                  Scrub a scripted early-morning series to see the moment the elevated air stops being warmer than the
+                  surface. Each frame is processed by the same decision engine.
+                </p>
+              </div>
+              <span class="v2-pill cream">17 LABELED SYNTHETIC FRAMES</span>
+            </div>
+            <div class="v2-card v2-pad">
+              <div class="v2-grid equal">
+                <div>
+                  <div class="v2-overline">MORNING EVENT / DEMO TIMELINE</div>
+                  <div
+                    id="replayClock"
+                    style="
+                      font-size: 52px;
+                      line-height: 1.12;
+                      font-weight: 850;
+                      letter-spacing: -0.07em;
+                      color: #244634;
+                    "
+                  >
+                    05:30
+                  </div>
+                  <p class="v2-muted" style="margin-top: 5px">
+                    Synthetic scripted morning · date-free local clock labels · 15-minute steps
+                  </p>
+                  <div class="replay-timeline" id="replayTimeline"></div>
+                  <div class="replay-timeLabels"><span>05:30</span><span>07:30</span><span>09:30</span></div>
+                  <input
+                    class="replay-range"
+                    id="replayScrub"
+                    type="range"
+                    min="0"
+                    max="16"
+                    value="0"
+                    aria-label="Choose replay frame"
+                  />
+                  <div class="replay-switch">
+                    <button class="v2-ctrl selected" id="replayPlay">▶ Play sequence</button
+                    ><button class="v2-ctrl" id="replayReset">↻ Restart</button
+                    ><button class="v2-ctrl" id="replayApply">Apply this frame to live dashboard</button
+                    ><button class="v2-ctrl" id="replayExport">↓ Export event</button>
+                  </div>
+                </div>
+                <div>
+                  <div class="v2-overline">AT THE SELECTED MOMENT</div>
+                  <div class="v2-readout stop" id="replayStatus">STOP</div>
+                  <p id="replayReason" class="v2-muted" style="min-height: 42px; margin-top: 10px"></p>
+                  <div class="v2-rule"></div>
+                  <div class="v2-facts">
+                    <div class="v2-fact"><b id="replayTemp">+5°F</b><span>30 FT − 5 FT</span></div>
+                    <div class="v2-fact"><b id="replayWind">4.6 / 7.6 mph</b><span>LOWER / UPPER WIND</span></div>
+                  </div>
+                  <div class="v2-minirow" style="margin-top: 18px">
+                    <b>Ground-only screening</b><span id="replayGround">LOOKS OK</span>
+                  </div>
+                  <div class="v2-minirow"><b>Paired decision</b><span id="replayPaired">STOP</span></div>
+                  <p class="v2-smallprint">
+                    Frame <span id="replayCount">1 / 17</span>. A change in sample status does not constitute a forecast
+                    or indicate real spray clearance.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="v2-banner">
+              <strong>What this shows:</strong> a single snapshot can hide how quickly a morning inversion forms or breaks.
+              All 17 frames are one deliberately scripted synthetic example run through the same decision engine — not
+              recorded sensor history and not a forecast.
+            </div>
+          </div>
+        </section>
+        <section class="contentPage" id="validation" aria-label="Labeled weather test benchmark">
+          <div class="v2-stack">
+            <div class="v2-head">
+              <div>
+                <div class="v2-overline">04 / TESTED, NOT JUST DEMONSTRATED</div>
+                <h2>Decision-engine evidence lab.</h2>
+                <p>
+                  40 labeled synthetic weather cases, computed against the live rules engine with fail/pass reporting.
+                  Unlike a pretty mockup, these tests probe exact boundaries, instrument failures, and hidden hazards.
+                </p>
+              </div>
+              <span class="v2-pill good" id="benchStatus">TESTING…</span>
+            </div>
+            <div class="v2-grid three">
+              <div class="v2-card v2-pad">
+                <div class="v2-kpiNum" id="benchPassed">—</div>
+                <p class="v2-kpiLabel">Rule assertions passed</p>
+              </div>
+              <div class="v2-card v2-pad">
+                <div class="v2-kpiNum" id="benchMissed">—</div>
+                <p class="v2-kpiLabel">Cases where ground-only wind screening misses a caution or stop</p>
+              </div>
+              <div class="v2-card v2-pad">
+                <div class="v2-kpiNum" id="benchStops">—</div>
+                <p class="v2-kpiLabel">Cases classified STOP by paired screening</p>
+              </div>
+            </div>
+            <div class="v2-card v2-pad">
+              <div class="v2-head">
+                <div>
+                  <h3>Synthetic benchmark explorer</h3>
+                  <p>Load any case to push its readings into the live dashboard and the timestamped audit log.</p>
+                </div>
+                <div class="v2-toolbar">
+                  <select class="v2-ctrl" id="validationFilter" aria-label="Filter test scenarios"></select
+                  ><button class="v2-ctrl" id="benchmarkRun">↻ Run all tests</button
+                  ><button class="v2-ctrl" id="exportBenchmark">↓ Export JSON</button>
+                </div>
+              </div>
+              <p class="v2-smallprint" id="benchmarkCount" role="status" style="margin-top: 14px"></p>
+              <div class="v2-tableWrap" style="margin-top: 8px" tabindex="0" role="region" aria-label="Synthetic benchmark results">
+                <table class="v2-testtable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>WEATHER CONDITION</th>
+                      <th>GROUP</th>
+                      <th>LABELED</th>
+                      <th>ENGINE</th>
+                      <th>5-FT ONLY</th>
+                      <th>RESULT</th>
+                      <th>DEMO</th>
+                    </tr>
+                  </thead>
+                  <tbody id="benchmarkTable"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="v2-grid equal">
+              <div class="v2-card v2-pad">
+                <h3>What these tests do prove</h3>
+                <p class="v2-muted" style="margin-top: 9px">
+                  The current deterministic rules behave as specified on these 40 inputs: inversion detection,
+                  wind-boundary checks, shear thresholds, wrap-around direction math, stale/invalid inputs and
+                  volatility cautions. Regression tests are reproducible and downloadable.
+                </p>
+                <div class="v2-rule"></div>
+                <button class="v2-ctrl selected" id="loadGroundBlindspot">▶ Replay the hidden-risk case</button>
+              </div>
+              <div class="v2-card v2-pad">
+                <h3>What they do not prove</h3>
+                <p class="v2-muted" style="margin-top: 9px">
+                  They are engineered synthetic labels produced for rule testing, not independently annotated agronomic
+                  observations. They cannot establish field accuracy, false-positive rates, chemical deposition, drift
+                  transport, or regulatory compliance. Field validation needs calibrated sensor towers, weather logs and
+                  specialist oversight.
+                </p>
+                <div class="v2-rule"></div>
+                <button class="v2-ctrl" id="benchmarkLive">↗ Open weather lab</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="lab" class="contentPage">
+          <div class="fullgrid">
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Weather lab · manipulate the invisible</h2>
+                  <p>Change a reading, run the transparent rules engine, and see the decision update</p>
+                </div>
+                <span class="tag">MANUAL / SIMULATED</span>
+              </div>
+              <div class="row">
+                <b>Sensor tower inputs</b
+                ><span class="footnote" style="margin: 0"
+                  >Temperature °F · Wind mph · Direction ° clockwise from north</span
+                >
+              </div>
+              <div class="divider"></div>
+              <p class="tableHead">Lower sensor — 5 feet</p>
+              <div class="sliderGrid" style="margin-top: 12px">
+                <label class="inputField"
+                  >Temperature °F<input type="number" id="tempLow" value="73" step="0.1" /></label
+                ><label class="inputField"
+                  >Wind speed mph<input type="number" id="speedLow" value="5" min="0" max="150" step="0.1" /></label
+                ><label class="inputField"
+                  >Wind direction °<input type="number" id="dirLow" value="85" min="0" max="360" step="1" /></label
+                ><label class="inputField"
+                  >Sensor age (min)<input type="number" id="ageLow" value="1" min="0" step="1"
+                /></label>
+              </div>
+              <div class="divider"></div>
+              <p class="tableHead">Upper sensor — 30 feet</p>
+              <div class="sliderGrid" style="margin-top: 12px">
+                <label class="inputField"
+                  >Temperature °F<input type="number" id="tempHigh" value="78.1" step="0.1" /></label
+                ><label class="inputField"
+                  >Wind speed mph<input type="number" id="speedHigh" value="9.5" min="0" max="150" step="0.1" /></label
+                ><label class="inputField"
+                  >Wind direction °<input type="number" id="dirHigh" value="137" min="0" max="360" step="1" /></label
+                ><label class="inputField"
+                  >Sensor age (min)<input type="number" id="ageHigh" value="1" min="0" step="1"
+                /></label>
+              </div>
+              <div class="divider"></div>
+              <p class="tableHead">Application / label inputs</p>
+              <div class="sliderGrid" style="margin-top: 12px">
+                <label class="inputField"
+                  >Product volatility<select id="volatility">
+                    <option value="low">Low / unknown</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select></label
+                ><label class="inputField"
+                  >Label minimum wind<input type="number" id="windMin" value="3" min="0" max="150" step="0.5" /></label
+                ><label class="inputField"
+                  >Label maximum wind<input type="number" id="windMax" value="10" min="0" max="150" step="0.5" /></label
+                ><label class="inputField"
+                  >Application method<select id="method">
+                    <option value="Airblast sprayer">Airblast sprayer</option>
+                    <option value="Ground boom">Ground boom</option>
+                    <option value="Other">Other</option>
+                  </select></label
+                >
+              </div>
+              <p class="footnote">
+                The default wind limits come from UC IPM general guidance and are not a representation of a specific
+                product label. Replace with actual label restrictions. The wind-shear cutoffs in this demo are
+                configurable heuristics, not regulatory thresholds.
+              </p>
+              <div class="row" style="margin-top: 18px">
+                <div class="toolbar">
+                  <button class="button dark" id="assessBtn">Analyze & record</button
+                  ><button class="button light" id="uploadBtn">Import tower JSON</button
+                  ><button class="button light" id="sampleTowerBtn">↓ Sample tower file</button
+                  ><button class="button light" id="resetLab">↺ Reset to demo</button
+                  ><input class="hidden" type="file" id="jsonInput" accept=".json,application/json" />
+                </div>
+                <div class="labVerdict"><span class="tag" id="labResult" aria-live="polite">STOP</span><small id="labReasons"></small></div>
+              </div>
+              <p class="footnote" id="importNote">
+                Import accepts one JSON object (or the first row of an array) with 5-ft / 30-ft temperature (°F), wind
+                speed (mph) and FROM direction (°), plus sensor ages in minutes or ISO-8601 timestamps with a UTC offset.
+                Missing timestamps are treated as invalid, never as fresh.
+              </p>
+            </div>
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Threshold transparency</h2>
+                  <p>No black-box score, no fabricated regulatory limits</p>
+                </div>
+              </div>
+              <div class="methods">
+                <p>
+                  <b>STOP</b> if any valid measured upper temperature is warmer than the lower temperature, wind at
+                  either height is outside your configured limits, or either reading is missing/stale. Severe shear also
+                  generates a conservative STOP in this prototype.
+                </p>
+                <p style="margin-top: 12px">
+                  <b>CAUTION</b> for moderate vertical wind shear or elevated product-volatility concerns.
+                  <b>GO</b> means no configured weather trigger fired; it never authorizes application.
+                </p>
+                <p class="footnote">
+                  Illustrative wind-shear defaults: 4 mph or 45° → CAUTION; 6 mph or 90° → STOP. These are demo alert
+                  settings, not validated legal or scientific thresholds.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="planner" class="contentPage">
+          <div class="fullgrid">
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Next spray-check opportunities</h2>
+                  <p>
+                    Regional forecasts suggest when to recheck; only on-site paired sensors can establish an inversion
+                    assessment
+                  </p>
+                </div>
+                <button class="button dark" id="loadForecast">↻ Load regional forecast</button>
+              </div>
+              <div class="row">
+                <span id="forecastSource" class="tag caution">ILLUSTRATIVE HOURS · NOT A FORECAST</span
+                ><span class="footnote" style="margin: 0">Fresno, CA · 36.74°N, 119.79°W</span>
+              </div>
+              <p class="footnote" id="forecastLimits"></p>
+              <p class="footnote" id="forecastStatus" role="status">Placeholder hours until you load the optional regional forecast.</p>
+              <div id="forecastGrid" class="forecast" style="margin-top: 16px"></div>
+              <div class="footnote">
+                Forecast sources provide modeled regional surface wind, temperature and rain potential, not a measured
+                5-ft / 30-ft orchard profile. A candidate window is not authorization to spray. Check on-site
+                instruments, wind shear, precipitation, product label, neighbors and applicable rules before
+                application.
+              </div>
+            </div>
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>How the planner works</h2>
+                  <p>Two distinct evidence layers, never mixed</p>
+                </div>
+              </div>
+              <div class="compare">
+                <div class="comparePart">
+                  <h3>1. Regional forecast</h3>
+                  <div class="big" style="font-size: 19px">PRE-SCREEN</div>
+                  <p>
+                    Wind at approximately 10 m, rain probability and temperatures from a forecast model. Identify
+                    potentially suitable check times.
+                  </p>
+                </div>
+                <div class="vs">→</div>
+                <div class="comparePart our">
+                  <h3>2. Orchard measurements</h3>
+                  <div class="big" style="font-size: 19px; color: #2c7456">VERIFY</div>
+                  <p>
+                    Recheck temperatures and wind at 5 ft and 30 ft at the actual spray location. The measured status
+                    takes precedence.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="log" class="contentPage">
+          <div class="card cardpad">
+            <div class="sectiontitle">
+              <div>
+                <h2>Time-stamped decision log</h2>
+                <p>Browser-local history · exact readings, triggers and source for each assessment · <span id="logCount"></span></p>
+              </div>
+              <div class="toolbar">
+                <button class="button light" id="exportCsv">↓ Export CSV</button
+                ><button class="button light" id="exportJson">↓ Export JSON</button
+                ><button class="button light" id="printLog">⎙ Print</button
+                ><button class="button light" id="clearLog">Clear</button>
+              </div>
+            </div>
+            <div id="fullLogTable" class="scrollTable" tabindex="0" role="region" aria-label="Full decision log"></div>
+            <p class="footnote">
+              Records are saved in this device's browser only. This prototype does not provide user accounts, shared
+              records, regulatory-grade audit storage, calibrated sensor validation or secure cloud retention.
+            </p>
+          </div>
+        </section>
+        <section id="science" class="contentPage">
+          <div class="card cardpad methods">
+            <div class="eyebrow">METHODS / TRANSPARENCY</div>
+            <h2 style="font-size: 25px; margin-top: 9px">Designed to explain, not overpromise.</h2>
+            <h3>Temperature inversion</h3>
+            <p>
+              Set <code>ΔT = T(30 ft) − T(5 ft)</code>. When ΔT is positive, the upper level is warmer: that meets the
+              challenge definition of a temperature inversion. An inversion is grounds for STOP. Real instruments
+              require calibration, quality checks and measurement uncertainty handling.
+            </p>
+            <h3>Wind screening</h3>
+            <p>
+              Check wind speed at both heights against configurable limits, initially 3–10 mph per UC IPM general
+              guidance. Compute absolute speed difference and shortest circular direction difference
+              (<code>min(|a−b|,360−|a−b|)</code>). Direction change thresholds are prototype-specific heuristics and
+              should be validated with agricultural meteorology experts.
+            </p>
+            <h3>Data provenance &amp; units</h3>
+            <table class="provTable">
+              <thead><tr><th scope="col">Kind</th><th scope="col">Examples</th><th scope="col">Where it comes from</th></tr></thead>
+              <tbody>
+                <tr><td><b>Input readings</b></td><td>T at 5 ft / 30 ft (°F), wind speed (mph), wind direction (° true, meteorological FROM), sensor age (min)</td><td>Simulated scenarios, manual entry or an imported JSON file — labelled in the header pill and in every log row. No live sensor is connected.</td></tr>
+                <tr><td><b>Configured thresholds</b></td><td>Min/max wind (default 3–10 mph), stale after 10 min, shear 4/6 mph and 45°/90°</td><td>User settings and prototype heuristics — replace with the product label and local rules.</td></tr>
+                <tr><td><b>Derived metrics</b></td><td>ΔT = T30 − T5, |wind gap|, shortest direction difference</td><td>Computed by the decision engine (v__CG_VERSION__) from the input readings.</td></tr>
+                <tr><td><b>Illustrative only</b></td><td>3D tracers, thermal band, boundary sectors and receptor positions, trend lead-in, replay frames, placeholder forecast hours</td><td>Explanatory graphics and synthetic data. Never measured drift, deposition, exposure or a forecast.</td></tr>
+              </tbody>
+            </table>
+            <p>Readings outside plausible ranges (−60–140 °F, 0–150 mph, 0–360°), negative sensor ages (future timestamps), imported files without timestamped readings, or unknown values are treated as <b>invalid → STOP</b>, never as GO. Times in the log are shown in your browser's time zone and exported as UTC (ISO-8601 “Z”).</p>
+            <h3>Source credibility</h3>
+            <p>
+              On-site sensors are the primary evidence. Regional API forecasts can guide the timing of a *future on-site
+              check*, but their altitude, terrain and model grid do not establish a canopy-layer inversion.
+              Demonstration values are simulated, not real orchard observations.
+            </p>
+            <h3>Safety and legal limitation</h3>
+            <p>
+              This is a hackathon decision-support prototype, not an approved spray-control system. It does not
+              determine legal compliance or guarantee zero drift. Always follow product labels, assess sensitive areas
+              and buffer zones, confirm calibrated equipment and inspect field conditions. Do not spray based solely on
+              a GO indication.
+            </p>
+            <h3>Research sources</h3>
+            <p>
+              <a
+                target="_blank"
+                rel="noopener"
+                href="https://ucanr.edu/blog/topics-subtropics/article/surface-inversions-cause-spray-drift"
+                >UC ANR: Surface inversions cause spray drift ↗</a
+              ><br /><a
+                target="_blank"
+                rel="noopener"
+                href="https://ipm.ucanr.edu/environmental-protection-and-pesticide-stewardship/mitigating-pesticide-hazards/"
+                >UC IPM: Mitigating pesticide hazards ↗</a
+              ><br /><a target="_blank" rel="noopener" href="https://ucanr.edu/site/airblast-spray-advisor"
+                >UC ANR: Airblast Spray Advisor ↗</a
+              ><br /><a target="_blank" rel="noopener" href="https://www.weather.gov/documentation/services-web-API"
+                >NWS API documentation ↗</a
+              ><br /><a target="_blank" rel="noopener" href="https://open-meteo.com/en/docs"
+                >Open-Meteo forecast API ↗</a
+              >
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script>
+      /*@inline js/engine.js*/
+    </script>
+    <script>
+      /*@inline js/app.js*/
+    </script>
+    <script>
+      /*@inline-benchmark*/
+    </script>
+    <script>
+      /*@inline js/enhancements.js*/
+    </script>
+  </body>
+</html>

@@ -1,0 +1,4266 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#10261e" />
+    <meta name="description" content="CanopyGuard — multi-height orchard spray drift decision support." />
+    <title>CanopyGuard — Orchard Drift Intelligence</title>
+    <meta name="canopyguard-version" content="2.1.0+4649a9628caa" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28'%3E%3Crect width='28' height='28' rx='8' fill='%23c5ef74'/%3E%3Cpath d='M14 24V7M14 12C9 10 7 6 7 3c6 1 9 4 7 9ZM14 16c4-6 8-7 12-6-1 7-6 9-12 9' stroke='%23152d22' stroke-width='2.5' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E" />
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap");
+:root {
+  --forest: #11261e;
+  --forest2: #1b3529;
+  --bg: #f5f6f1;
+  --text: #182820;
+  --muted: #5f6b62;
+  --stroke: #e3e9df;
+  --lime: #c7ef73;
+  --red: #dc6054;
+  --amber: #d4943d;
+  --green: #277a55;
+  --white: #fff;
+  --radius: 20px;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font:
+    14px/1.5 "DM Sans",
+    sans-serif;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #8ab7f0;
+  outline-offset: 2px;
+}
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+h1,
+h2,
+h3 {
+  font-family: Manrope, sans-serif;
+  letter-spacing: -0.04em;
+}
+a {
+  color: inherit;
+}
+.app {
+  display: flex;
+  min-height: 100vh;
+}
+.sidebar {
+  background: var(--forest);
+  color: #edf3e8;
+  width: 236px;
+  min-width: 236px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 15px 18px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 10;
+}
+.logo {
+  display: flex;
+  gap: 11px;
+  align-items: center;
+  padding: 0 11px 37px;
+}
+.mark {
+  display: grid;
+  place-items: center;
+  background: var(--lime);
+  border-radius: 12px;
+  width: 37px;
+  height: 37px;
+  color: var(--forest);
+}
+.brand {
+  font: 800 19px/1.1 Manrope;
+  letter-spacing: -0.055em;
+}
+.brand small {
+  display: block;
+  font: 600 9px/1.6 "DM Sans";
+  letter-spacing: 0.22em;
+  color: #91ac9b;
+  margin-top: 5px;
+}
+.navtitle {
+  font-size: 10px;
+  letter-spacing: 0.17em;
+  font-weight: 800;
+  color: #6e8a78;
+  padding: 0 16px;
+  margin: 0 0 15px;
+}
+.nav {
+  display: grid;
+  gap: 5px;
+}
+.navbtn {
+  background: none;
+  border: 0;
+  color: #a9beaf;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 13px;
+  border-radius: 11px;
+  font-weight: 700;
+}
+.navbtn svg {
+  width: 19px;
+  height: 19px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+}
+.navbtn.active {
+  background: #294437;
+  color: #d8f9b7;
+}
+.navbtn:hover {
+  background: #223b2e;
+  color: white;
+}
+.sidebarBottom {
+  margin-top: auto;
+  border-top: 1px solid #344e3e;
+  padding: 21px 9px 0;
+}
+.sensorPulse {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--lime);
+  box-shadow: 0 0 0 4px #c7ef731d;
+  margin-right: 8px;
+}
+.mutedwhite {
+  font-size: 11px;
+  color: #89a392;
+}
+.smallwhite {
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 3px;
+}
+.sidebarFoot {
+  font-size: 10px;
+  color: #6f8b79;
+  margin-top: 22px;
+  line-height: 1.6;
+}
+.main {
+  min-width: 0;
+  flex: 1;
+  max-width: 1600px;
+  margin: auto;
+  padding: 30px 35px 90px;
+}
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 24px;
+}
+.eyebrow {
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.19em;
+  color: #5e6e5e;
+}
+.topbar h1 {
+  font-size: 29px;
+  letter-spacing: -0.055em;
+  font-weight: 800;
+  margin: 5px 0;
+}
+.topbar p {
+  color: var(--muted);
+  font-size: 13px;
+}
+.topRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.pill {
+  padding: 8px 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 50px;
+  background: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  color: #5d6c62;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d19d43;
+}
+.button {
+  border: 1px solid transparent;
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 12px;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.button.dark {
+  background: var(--forest);
+  color: #fff;
+}
+.button.light {
+  background: white;
+  color: #2d4738;
+  border-color: #dfe7db;
+}
+.button.lime {
+  background: var(--lime);
+  color: var(--forest);
+}
+.button:hover {
+  filter: brightness(0.96);
+}
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.53fr) minmax(320px, 1fr);
+  gap: 16px;
+}
+.card {
+  background: var(--white);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius);
+  box-shadow: 0 3px 20px #142a1906;
+  overflow: hidden;
+}
+.cardpad {
+  padding: 22px;
+}
+.sectiontitle {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+.sectiontitle h2 {
+  font-size: 16px;
+}
+.sectiontitle p {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.subtlelink {
+  font-weight: 800;
+  font-size: 11px;
+  color: #476d55;
+  background: transparent;
+  border: 0;
+}
+.hero {
+  background: #11261e;
+  color: white;
+  min-height: 285px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+}
+.heroGlow {
+  position: absolute;
+  width: 410px;
+  height: 410px;
+  background: radial-gradient(circle, #a3d25f24, transparent 67%);
+  right: -125px;
+  top: -130px;
+}
+.heroContent {
+  position: relative;
+  z-index: 1;
+  padding: 27px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 68%;
+}
+.heroTop {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 10px;
+  color: #b2c4b7;
+  display: flex;
+  gap: 9px;
+  align-items: center;
+}
+.liveDot {
+  width: 7px;
+  height: 7px;
+  background: var(--lime);
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px #c7ef7322;
+}
+.status {
+  font: 800 clamp(46px, 5vw, 72px)/1 Manrope;
+  letter-spacing: -0.075em;
+  margin: 17px 0 3px;
+}
+.status.stop {
+  color: #f89784;
+}
+.status.caution {
+  color: #f3c77c;
+}
+.status.go {
+  color: var(--lime);
+}
+.statusSub {
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: -0.015em;
+}
+.heroText {
+  color: #c8d6cd;
+  font-size: 12px;
+  line-height: 1.65;
+  margin-top: 12px;
+  max-width: 420px;
+}
+.heroBottom {
+  font-size: 11px;
+  color: #a8c0b0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 20px;
+}
+.heroArt {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 40%;
+  height: 100%;
+  opacity: 0.95;
+}
+.metricstrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 13px;
+  margin-top: 16px;
+}
+.metric {
+  padding: 17px 18px;
+}
+.metric span {
+  display: block;
+  color: #606c63;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+}
+.metric strong {
+  font: 800 25px Manrope;
+  letter-spacing: -0.05em;
+  display: block;
+  margin-top: 6px;
+}
+.metric small {
+  color: #606e63;
+  font-size: 10px;
+}
+.metric strong.warning {
+  color: #b84235;
+}
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 26px 1fr;
+  gap: 7px;
+  align-items: stretch;
+}
+.comparePart {
+  padding: 17px;
+  border-radius: 13px;
+  background: #f5f7f3;
+}
+.comparePart.our {
+  background: #edf5e8;
+}
+.comparePart h3 {
+  font-size: 12px;
+  letter-spacing: -0.02em;
+}
+.comparePart .big {
+  font: 800 26px Manrope;
+  letter-spacing: -0.055em;
+  margin: 7px 0 0;
+}
+.comparePart p {
+  font-size: 11px;
+  color: #5f6c63;
+  line-height: 1.5;
+}
+.comparePart.our .big {
+  color: #ac4a3f;
+}
+.vs {
+  display: grid;
+  place-items: center;
+  color: #5d6c60;
+  font-size: 10px;
+  font-weight: 800;
+}
+.signalRow {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+.signal {
+  border-radius: 8px;
+  background: #f6ebe7;
+  color: #a34b3f;
+  padding: 7px 10px;
+  font-size: 10px;
+  font-weight: 800;
+}
+.signal.good {
+  color: #36785a;
+  background: #e7f4e6;
+}
+.signal.caution {
+  color: #96652a;
+  background: #fff3dd;
+}
+.tower {
+  height: 270px;
+  background: linear-gradient(#fbfdf9, #f2f7ef);
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  margin-top: 4px;
+}
+.tower svg {
+  width: 100%;
+  height: 100%;
+}
+.towerlabel {
+  position: absolute;
+  left: 18px;
+  top: 13px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  color: #596f62;
+}
+.tableHead {
+  font-weight: 800;
+  font-size: 11px;
+  color: #597062;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+.pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 12px;
+}
+.pairCell {
+  border: 1px solid #e3e9df;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+.pairCell .alt {
+  font-size: 10px;
+  color: #606d65;
+  font-weight: 800;
+}
+.pairCell .val {
+  font: 800 22px Manrope;
+  letter-spacing: -0.045em;
+  margin-top: 5px;
+}
+.pairCell .desc {
+  font-size: 11px;
+  color: #5d6e60;
+}
+.alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.alert {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid #ecdfd7;
+  background: #fff9f5;
+  border-radius: 12px;
+}
+.alert .alertIcon {
+  height: 28px;
+  min-width: 28px;
+  border-radius: 9px;
+  background: #f7e4de;
+  color: #b45445;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+}
+.alert h3 {
+  font-size: 12px;
+}
+.alert p {
+  font-size: 11px;
+  color: #606e62;
+  margin-top: 2px;
+  line-height: 1.5;
+}
+.alert.amber {
+  border-color: #f0e7ce;
+  background: #fffaf0;
+}
+.alert.amber .alertIcon {
+  background: #f7eac6;
+  color: #ad7b26;
+}
+.alert.green {
+  border-color: #dfead9;
+  background: #f3faf1;
+}
+.alert.green .alertIcon {
+  background: #dcefd6;
+  color: #3d8052;
+}
+.chartWrap {
+  height: 175px;
+  width: 100%;
+}
+canvas {
+  height: 100%;
+  width: 100%;
+  display: block;
+}
+.chartFoot {
+  display: flex;
+  justify-content: space-between;
+  gap: 7px;
+  font-size: 10px;
+  color: #616c62;
+  margin-top: 6px;
+}
+.dotLegend {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+}
+.dotLegend:before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e09e82;
+}
+.dotLegend.two:before {
+  background: #70a48a;
+}
+.scenarios {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 9px;
+}
+.scenario {
+  border: 1px solid #e0e8df;
+  background: #fff;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: left;
+  min-height: 71px;
+}
+.scenario.selected {
+  border: 2px solid #76944f;
+  background: #f0f7e4;
+  padding: 11px;
+}
+.scenario b {
+  display: block;
+  font-size: 11px;
+}
+.scenario small {
+  display: block;
+  font-size: 10px;
+  color: #606d63;
+  margin-top: 3px;
+}
+.scenario:hover {
+  border-color: #9bb783;
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+.tag {
+  display: inline-block;
+  border-radius: 6px;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 5px 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: #eaf1e8;
+  color: #4e745d;
+}
+.tag.stop {
+  color: #ae4b3f;
+  background: #ffebe6;
+}
+.tag.caution {
+  color: #896325;
+  background: #fff4da;
+}
+.tag.go {
+  color: #347751;
+  background: #e8f7e6;
+}
+.footnote {
+  font-size: 10px;
+  color: #5e6c62;
+  line-height: 1.7;
+  margin-top: 15px;
+}
+.logtable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+.logtable th {
+  text-align: left;
+  font-size: 9px;
+  color: #626e64;
+  letter-spacing: 0.08em;
+  padding: 9px 6px;
+  border-bottom: 1px solid var(--stroke);
+}
+.logtable td {
+  padding: 11px 6px;
+  border-bottom: 1px solid #eef2ec;
+  color: #44574b;
+  vertical-align: top;
+}
+.logtable td.reason {
+  max-width: 280px;
+}
+.logtable tr:last-child td {
+  border-bottom: 0;
+}
+.scrollTable {
+  overflow: auto;
+}
+.sliderGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.inputField {
+  font-size: 10px;
+  color: #606e65;
+  font-weight: 800;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.inputField input,
+.inputField select {
+  width: 100%;
+  border-radius: 9px;
+  border: 1px solid #dce5da;
+  background: #fff;
+  padding: 10px 9px;
+  color: #243a2d;
+  font-size: 12px;
+  font-weight: 700;
+}
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.divider {
+  height: 1px;
+  background: #eaf0e7;
+  margin: 18px 0;
+}
+.forecast {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 9px;
+}
+.forecastHour {
+  border-radius: 11px;
+  background: #f6f9f4;
+  border: 1px solid #e7eee4;
+  padding: 12px 10px;
+}
+.forecastHour b {
+  font-size: 11px;
+}
+.forecastHour strong {
+  display: block;
+  font: 800 19px Manrope;
+  margin-top: 9px;
+}
+.forecastHour p {
+  font-size: 10px;
+  color: #606c62;
+}
+.forecastHour.good {
+  background: #eaf5e6;
+}
+.forecastHour.bad {
+  background: #fcf0e5;
+}
+.forecastHour.unknown {
+  background: #f4f6f3;
+}
+.forecastHour em {
+  font-size: 9px;
+  display: block;
+  font-style: normal;
+  font-weight: 800;
+  margin-top: 8px;
+  color: #6a6a6a;
+}
+.hidden {
+  display: none !important;
+}
+.contentPage {
+  display: none;
+}
+.contentPage.active {
+  display: block;
+}
+.fullgrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+.settingsline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.settingsline input {
+  accent-color: #466e4c;
+}
+.methods {
+  max-width: 810px;
+}
+.methods h3 {
+  font-size: 16px;
+  margin: 20px 0 7px;
+}
+.methods p,
+.methods li {
+  font-size: 13px;
+  color: #5f6f62;
+  line-height: 1.8;
+}
+.methods code {
+  background: #f0f4ec;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+.mobileMenu {
+  display: none;
+}
+.toast {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  background: #173c2a;
+  color: #fff;
+  padding: 13px 17px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px #122b2040;
+  z-index: 90;
+  font-size: 12px;
+  max-width: 330px;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: 0.2s;
+}
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 1180px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .metricstrip {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .forecast {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+@media (max-width: 800px) {
+  .sidebar {
+    position: fixed;
+    left: -240px;
+    transition: left 0.25s;
+  }
+  .sidebar.open {
+    left: 0;
+  }
+  .main {
+    padding: 19px 16px 60px;
+  }
+  .mobileMenu {
+    display: inline-flex;
+  }
+  .topbar h1 {
+    font-size: 23px;
+  }
+  .metricstrip {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .heroContent {
+    max-width: 75%;
+  }
+  .heroArt {
+    width: 42%;
+  }
+  .sliderGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 520px) {
+  .hero {
+    min-height: 275px;
+  }
+  .heroContent {
+    max-width: 100%;
+    padding: 23px;
+  }
+  .heroArt {
+    opacity: 0.17;
+    width: 80%;
+  }
+  .status {
+    font-size: 65px;
+  }
+  .compare {
+    grid-template-columns: 1fr;
+  }
+  .vs {
+    display: none;
+  }
+  .scenarios {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .forecast {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .pair {
+    grid-template-columns: 1fr 1fr;
+  }
+  .topRight .pill {
+    display: none;
+  }
+}
+
+    </style>
+    <style>
+      /* CanopyGuard 2.0: field-grade interaction and transparent illustrative visualizations */
+:root {
+  --ink: #163227;
+  --accent: #d5f38c;
+  --mint: #e7f1e5;
+  --line: #dae4d9;
+  --shadow: 0 20px 56px rgba(21, 58, 39, 0.08);
+}
+.navbtn[data-page="twin"],
+.navbtn[data-page="boundary"],
+.navbtn[data-page="validation"],
+.navbtn[data-page="replay"] {
+  position: relative;
+}
+.navbtn[data-page="twin"]::after {
+  content: "NEW";
+  position: absolute;
+  right: 13px;
+  top: 13px;
+  background: #c8ef80;
+  color: #1a3528;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  padding: 2px 5px;
+}
+.v2-intro {
+  background: linear-gradient(105deg, #183e30 0%, #193d33 70%, #375a39 100%);
+  border: 1px solid #335745;
+  border-radius: 22px;
+  position: relative;
+  overflow: hidden;
+  color: #eef6eb;
+  margin-bottom: 18px;
+  padding: 25px 28px;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+}
+.v2-intro:before {
+  content: "";
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  right: -90px;
+  top: -145px;
+  background: radial-gradient(circle, #b0ec8e40, transparent 68%);
+  pointer-events: none;
+}
+.v2-intro h2 {
+  font-size: 25px;
+  letter-spacing: -0.045em;
+  font-weight: 800;
+  margin: 7px 0;
+}
+.v2-intro p {
+  color: #bdd1c4;
+  max-width: 600px;
+  font-size: 13px;
+}
+.v2-kicker {
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  color: #bddd9a;
+  font-weight: 800;
+}
+.v2-intro .v2-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  position: relative;
+  z-index: 1;
+}
+.v2-btn {
+  border: 1px solid #c8e6a0;
+  background: var(--accent);
+  color: #213929;
+  font-weight: 800;
+  padding: 12px 15px;
+  border-radius: 12px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.v2-btn.secondary {
+  background: #ffffff12;
+  border-color: #ffffff45;
+  color: #edf7eb;
+}
+.v2-btn:focus-visible {
+  outline: 3px solid #aed3ed;
+  outline-offset: 3px;
+}
+.v2-stack {
+  display: grid;
+  gap: 18px;
+}
+.v2-head {
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.v2-head h2 {
+  font-size: 25px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+}
+.v2-head p {
+  color: #606c63;
+  margin: 5px 0 0;
+  max-width: 620px;
+}
+.v2-overline {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: #4e7255;
+  margin-bottom: 7px;
+}
+.v2-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+.v2-pill {
+  border: 1px solid #d6e4d8;
+  background: #fff;
+  border-radius: 100px;
+  padding: 7px 11px;
+  color: #45604d;
+  font-size: 11px;
+  font-weight: 800;
+}
+.v2-pill.cream {
+  background: #f0f5e3;
+}
+.v2-ctrl {
+  background: #fff;
+  border: 1px solid #d5e3d6;
+  border-radius: 10px;
+  padding: 8px 11px;
+  color: #284535;
+  font-size: 12px;
+  font-weight: 750;
+  min-height: 37px;
+}
+.v2-ctrl.selected {
+  background: #234534;
+  color: #f1ffe5;
+  border-color: #234534;
+}
+.v2-ctrl:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.v2-card {
+  background: #fff;
+  border: 1px solid #dfe8dc;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px #15362107;
+}
+.v2-pad {
+  padding: 22px;
+}
+.v2-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.83fr);
+  gap: 17px;
+}
+.v2-grid.equal {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+.v2-grid.three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.v2-card h3 {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.035em;
+}
+.v2-muted {
+  font-size: 12px;
+  color: #5f6c62;
+  line-height: 1.6;
+}
+.v2-rule {
+  height: 1px;
+  background: #e5ebe5;
+  margin: 17px 0;
+}
+.v2-value {
+  font-size: 30px;
+  line-height: 1.15;
+  font-weight: 850;
+  letter-spacing: -0.06em;
+  color: #183d2b;
+}
+.v2-caption {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 800;
+  color: #5e6e63;
+  margin: 0 0 8px;
+}
+.v2-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.v2-fact {
+  background: #f5f8f0;
+  padding: 14px;
+  border-radius: 13px;
+  border: 1px solid #e4ecdf;
+}
+.v2-fact b {
+  font-size: 20px;
+  letter-spacing: -0.04em;
+}
+.v2-fact span {
+  display: block;
+  font-size: 10px;
+  color: #576e5b;
+  margin-top: 4px;
+  font-weight: 700;
+}
+.v2-note {
+  font-size: 11px;
+  color: #5a6d5e;
+  line-height: 1.6;
+}
+.v2-signal {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  border-radius: 13px;
+  border: 1px solid #f0d9d3;
+  background: #fff4f0;
+  color: #7b483b;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.v2-signal.good {
+  background: #f0f8ec;
+  border-color: #d9ead5;
+  color: #3e7356;
+}
+.v2-signal.amber {
+  background: #fff9ed;
+  border-color: #f1e4c8;
+  color: #7a5a2c;
+}
+.v2-signal span {
+  font-weight: 900;
+  font-size: 19px;
+}
+.v2-minirow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+.v2-minirow b {
+  color: #294738;
+  font-weight: 800;
+}
+.v2-minirow span {
+  color: #5d6e62;
+}
+.v2-stripe {
+  height: 7px;
+  background: #e3ede3;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+.v2-stripe div {
+  height: 100%;
+  background: #9abc8f;
+  border-radius: 10px;
+}
+.twin-stage {
+  position: relative;
+  overflow: hidden;
+  background: #0e251e;
+  border-radius: 17px;
+  height: 445px;
+  border: 1px solid #345246;
+}
+.twin-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: pan-y;
+}
+.twin-stage canvas:active {
+  cursor: grabbing;
+}
+.twin-HUD {
+  position: absolute;
+  left: 17px;
+  top: 17px;
+  right: 17px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+  pointer-events: none;
+}
+.twin-hudBlock {
+  background: #112b25d8;
+  border: 1px solid #8fae9540;
+  color: #eaf5e6;
+  border-radius: 12px;
+  padding: 12px 14px;
+  backdrop-filter: blur(15px);
+  max-width: 58%;
+}
+.twin-hudBlock small {
+  display: block;
+  color: #b4cab4;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+.twin-hudBlock b {
+  font-size: 17px;
+  letter-spacing: -0.04em;
+}
+.twin-hudBlock span {
+  display: block;
+  font-size: 11px;
+  color: #e0eee0;
+}
+.twin-stage .twin-bottom {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  background: #102920cf;
+  border: 1px solid #b7cbb240;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 10px;
+  color: #bfd4be;
+  text-align: center;
+  pointer-events: none;
+  backdrop-filter: blur(9px);
+}
+.twin-status {
+  color: #ffb9a8 !important;
+}
+.twin-legend {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  margin-top: 11px;
+  color: #566a5a;
+  font-weight: 700;
+  font-size: 11px;
+}
+.twin-legend i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 4px;
+}
+.twin-legend .low {
+  background: #b7ec82;
+}
+.twin-legend .upper {
+  background: #f8b089;
+}
+.twin-legend .p {
+  background: #e7f7d2;
+}
+.v2-metricrow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.v2-metric {
+  border: 1px solid #dfe9df;
+  border-radius: 12px;
+  padding: 13px 14px;
+  background: #fbfdf9;
+}
+.v2-metric small {
+  display: block;
+  color: #5c6e60;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 9px;
+  font-weight: 850;
+}
+.v2-metric b {
+  font-size: 23px;
+  letter-spacing: -0.06em;
+  color: #23563d;
+}
+.v2-metric em {
+  font-size: 10px;
+  color: #5c705e;
+  display: block;
+  font-style: normal;
+}
+.boundary-stage {
+  background: #122920;
+  min-height: 480px;
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #325447;
+}
+.boundary-stage svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+  cursor: crosshair;
+  user-select: none;
+}
+.boundary-legend {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  background: #0d2c23db;
+  border: 1px solid #a3b6a833;
+  border-radius: 11px;
+  color: #e5f3e6;
+  padding: 11px 13px;
+  font-size: 11px;
+  pointer-events: none;
+}
+.boundary-legend strong {
+  font-size: 13px;
+  display: block;
+}
+.boundary-legend span {
+  color: #b9cfba;
+}
+.boundary-end {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: #0d2c23dc;
+  border: 1px solid #a3b6a833;
+  border-radius: 8px;
+  padding: 8px 11px;
+  color: #b6cabc;
+  font-size: 10px;
+  pointer-events: none;
+}
+.v2-receptor {
+  display: flex;
+  justify-content: space-between;
+  gap: 11px;
+  padding: 12px 0;
+  border-bottom: 1px solid #e8eee8;
+}
+.v2-receptor:last-child {
+  border: 0;
+}
+.v2-receptor strong {
+  font-size: 12px;
+  color: #2d4436;
+}
+.v2-receptor small {
+  display: block;
+  color: #5c6f5e;
+  font-size: 11px;
+  margin-top: 2px;
+}
+.v2-receptor em {
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 850;
+  padding: 4px 8px;
+  border-radius: 7px;
+  height: max-content;
+  white-space: nowrap;
+}
+.v2-receptor em.aligned {
+  background: #fde6dd;
+  color: #94492f;
+}
+.v2-receptor em.between {
+  background: #fff2db;
+  color: #896336;
+}
+.v2-receptor em.cross {
+  background: #e9f4e6;
+  color: #44734d;
+}
+.map-receptor {
+  cursor: grab;
+}
+.map-receptor:active {
+  cursor: grabbing;
+}
+.map-receptor:focus-visible {
+  outline: 3px solid #fffc8d;
+}
+.v2-comparison {
+  display: grid;
+  grid-template-columns: 1fr 34px 1fr;
+  gap: 9px;
+  align-items: center;
+}
+.v2-comparePanel {
+  padding: 17px;
+  border-radius: 14px;
+  background: #f6f8f4;
+  border: 1px solid #e6eee4;
+}
+.v2-comparePanel.better {
+  background: #eef5ea;
+  border-color: #d3e6c9;
+}
+.v2-comparePanel small {
+  display: block;
+  color: #596e61;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-weight: 800;
+}
+.v2-comparePanel b {
+  display: block;
+  font-size: 25px;
+  margin: 5px 0;
+  color: #244937;
+}
+.v2-comparePanel b.alert {
+  color: #a5503f;
+}
+.v2-comparePanel p {
+  font-size: 11px;
+  color: #5f6d62;
+}
+.v2-vs {
+  font-weight: 850;
+  font-size: 10px;
+  color: #5c6f5d;
+  text-align: center;
+}
+.replay-timeline {
+  display: flex;
+  height: 23px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 20px 0 8px;
+}
+.replay-timeline button {
+  flex: 1;
+  border: 0;
+  border-right: 1px solid #fff9;
+  cursor: pointer;
+  opacity: 0.88;
+}
+.replay-timeline button.selected {
+  outline: 3px solid white;
+  outline-offset: -3px;
+  opacity: 1;
+}
+.replay-timeLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #5e6e60;
+}
+.replay-range {
+  width: 100%;
+  accent-color: #214b37;
+  height: 25px;
+  margin: 20px 0 4px;
+}
+.replay-switch {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.v2-readout {
+  font-size: 38px;
+  font-weight: 850;
+  letter-spacing: -0.06em;
+  color: #1d4431;
+  line-height: 1;
+}
+.v2-readout.stop {
+  color: #a6533f;
+}
+.v2-readout.caution {
+  color: #876330;
+}
+.v2-readout.go {
+  color: #337754;
+}
+.v2-timeStamp {
+  font-weight: 800;
+  font-size: 12px;
+  color: #58705d;
+}
+.v2-tableWrap {
+  overflow: auto;
+}
+.v2-testtable {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 11px;
+}
+.v2-testtable th {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: #5e6e5c;
+  text-align: left;
+  background: #f5f8f4;
+  padding: 11px 13px;
+  white-space: nowrap;
+}
+.v2-testtable td {
+  padding: 11px 13px;
+  border-bottom: 1px solid #e6ebe3;
+  color: #4a5c50;
+}
+.v2-testtable td:nth-child(2) {
+  font-weight: 750;
+  color: #2c4634;
+}
+.v2-tableStatus {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 850;
+  font-size: 10px;
+  white-space: nowrap;
+  background: #edf2ed;
+  color: #3e5a4c;
+}
+.v2-tableStatus.pass {
+  background: #e5f4e1;
+  color: #44754c;
+}
+.v2-tableStatus.fail {
+  background: #fbe6e3;
+  color: #a64f44;
+}
+.v2-kpiNum {
+  font-size: 37px;
+  font-weight: 850;
+  letter-spacing: -0.06em;
+  color: #214b35;
+}
+.v2-kpiLabel {
+  font-size: 12px;
+  color: #5e6f63;
+}
+.v2-filtergroup {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.v2-banner {
+  padding: 13px 16px;
+  background: #edf5e7;
+  border: 1px solid #dbe9d6;
+  border-radius: 13px;
+  color: #547059;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.v2-banner strong {
+  color: #2f593d;
+}
+.v2-label {
+  font-size: 11px;
+  color: #56715e;
+  font-weight: 800;
+}
+.v2-smallprint {
+  font-size: 10px;
+  color: #5e6e62;
+  line-height: 1.6;
+}
+.v2-toggles {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.v2-toggles label {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-size: 11px;
+  color: #4e7059;
+  font-weight: 700;
+}
+.v2-toggles input {
+  accent-color: #1e5940;
+}
+@media (max-width: 1180px) {
+  .v2-grid {
+    grid-template-columns: 1fr;
+  }
+  .v2-grid.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 700px) {
+  .v2-intro {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 21px;
+  }
+  .v2-intro h2 {
+    font-size: 22px;
+  }
+  .v2-head h2 {
+    font-size: 21px;
+  }
+  .v2-grid.three,
+  .v2-grid.equal {
+    grid-template-columns: 1fr;
+  }
+  .twin-stage {
+    height: 380px;
+  }
+  .twin-hudBlock {
+    max-width: 60%;
+    padding: 10px;
+  }
+  .twin-hudBlock b {
+    font-size: 14px;
+  }
+  .v2-metricrow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .v2-metric {
+    padding: 10px 7px;
+  }
+  .v2-metric b {
+    font-size: 19px;
+  }
+  .v2-comparison {
+    grid-template-columns: 1fr 25px 1fr;
+  }
+  .v2-comparePanel {
+    padding: 11px;
+  }
+  .v2-comparePanel b {
+    font-size: 18px;
+  }
+  .boundary-stage {
+    min-height: 0;
+  }
+  .v2-pad {
+    padding: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .twin-stage canvas {
+    scroll-behavior: auto;
+  }
+}
+/* Keep the visual column at its own natural height rather than stretching it beside stacked cards. */
+.v2-grid {
+  align-items: start;
+}
+
+/* ===== 2.1 finishing pass: state colours, accessibility, mobile, print ===== */
+.skipLink { position: absolute; left: -9999px; top: 8px; z-index: 100; background: #102a1f; color: #f3ffe9; padding: 10px 14px; border-radius: 10px; font-weight: 800; }
+.skipLink:focus { left: 12px; }
+#pageTitle:focus { outline: none; }
+.buildTag { display: inline-block; margin-top: 6px; color: #8fa897; font-variant-numeric: tabular-nums; }
+.navGlyph { font-size: 19px; min-width: 20px; text-align: center; }
+.navbtn[data-page="twin"]::after { content: none; display: none; }
+.navScrim { display: none; }
+.v2-pill.stop { background: #fde9e3; border-color: #f2c3b5; color: #a5452f; }
+.v2-pill.caution { background: #fff3dc; border-color: #f0d8a8; color: #8a5e17; }
+.v2-pill.go { background: #e6f4e3; border-color: #c4e2c0; color: #2f6f45; }
+.v2-readoutSmall { display: block; font-size: 22px !important; font-weight: 850; letter-spacing: -0.04em; line-height: 1.15; }
+.v2-readoutSmall.stop, .v2-tagText.stop { color: #ae4d39 !important; }
+.v2-readoutSmall.caution, .v2-tagText.caution { color: #8f6114 !important; }
+.v2-readoutSmall.go, .v2-tagText.go { color: #2f7a4f !important; }
+.v2-tagText { font-weight: 850; }
+.v2-comparePanel b#twinGround, .v2-comparePanel b#boundaryGround { font-size: 22px; color: #3d5a48; letter-spacing: -0.04em; }
+.v2-fact b#twinInputQuality { font-size: 14px; letter-spacing: 0; line-height: 1.3; }
+.twinReasons { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+.twinReasons li { font-size: 12px; color: #3f5546; padding: 7px 10px; border-radius: 9px; background: #f6f8f4; border: 1px solid #e6eee4; }
+.twinReasons li b { font-size: 10px; letter-spacing: 0.08em; margin-right: 6px; }
+.twinReasons li.stop b { color: #ae4d39; }
+.twinReasons li.caution b { color: #8f6114; }
+.twinReasons li.go b { color: #2f7a4f; }
+.alertCode { font-size: 10px; font-weight: 800; letter-spacing: 0.06em; color: #746660; margin-left: 6px; white-space: nowrap; }
+.labVerdict { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.labVerdict small { font-size: 11px; font-weight: 700; color: #5d6d61; letter-spacing: 0.04em; }
+.inputField input[aria-invalid="true"] { border-color: #c9533d !important; background: #fff4f1 !important; box-shadow: 0 0 0 3px #f5d2c9; }
+.emptyState { padding: 22px; border: 1px dashed #cfdccf; border-radius: 14px; text-align: center; color: #5a6d5e; display: grid; gap: 4px; font-size: 13px; }
+.logtable td.when { min-width: 168px; font-variant-numeric: tabular-nums; }
+.logtable td small { color: #5d6c60; font-size: 10px; }
+.forecastHour strong small { font: 600 10px 'DM Sans', sans-serif; }
+.v2-testtable small.codes { display: block; font-size: 9.5px; color: #5e6e60; margin-top: 2px; letter-spacing: 0.02em; }
+.v2-empty { text-align: center; padding: 26px !important; color: #5a6d5e; }
+.boundary-stage .boundary-legend { top: auto; bottom: 12px; left: 12px; }
+.boundary-legend .lg5 { color: #c8ee96 !important; }
+.boundary-legend .lg30 { color: #f8bd96 !important; }
+.map-receptor:focus { outline: none; }
+.map-receptor:focus-visible circle { stroke: #fffc8d; stroke-width: 5; }
+.replay-timeline button.stop { background: #d87b64; }
+.replay-timeline button.caution { background: #e2b86e; }
+.replay-timeline button.go { background: #71b288; }
+.twin-stage canvas:focus-visible { outline: 3px solid #8ab7f0; outline-offset: -3px; }
+button:disabled { cursor: not-allowed; opacity: 0.5; }
+
+@media (max-width: 800px) {
+  .navScrim { display: block; position: fixed; inset: 0; background: #0b1d1580; opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 9; }
+  body.menuOpen .navScrim { opacity: 1; pointer-events: auto; }
+  .sidebar { overflow-y: auto; }
+  .v2-ctrl, .button { min-height: 44px; }
+  .v2-toggles label { min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+}
+@media (max-width: 700px) {
+  .boundary-stage .boundary-legend, .boundary-stage .boundary-end { position: static; margin: 10px; display: block; }
+  .boundary-stage { display: flex; flex-direction: column; }
+  .twin-stage .twin-bottom { font-size: 9px; padding: 7px 9px; }
+  .twin-HUD { gap: 6px; }
+  .v2-fact b#twinInputQuality { font-size: 12px; }
+}
+@media (max-width: 520px) {
+  .sectiontitle { flex-wrap: wrap; }
+  .subtlelink { min-height: 44px; }
+  .sectiontitle > .toolbar { width: 100%; }
+  .logtable { min-width: 680px; }
+  .heroArt { display: none; }
+  .topRight .pill#nowTime { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+}
+@media print {
+  .sidebar, .topRight, .mobileMenu, .toast, .navScrim, .toolbar, .skipLink { display: none !important; }
+  .contentPage { display: none !important; }
+  #log.contentPage { display: block !important; }
+  .main { padding: 0 !important; }
+  .card { box-shadow: none !important; border-color: #bbb !important; }
+  .scrollTable { overflow: visible !important; max-height: none !important; }
+}
+/* contrast on the dark sidebar */
+.navtitle { color: #9db5a5 !important; }
+.sidebarFoot { color: #9ab3a2 !important; }
+.buildTag { color: #a7bfae !important; }
+html, body { overscroll-behavior-x: none; }
+.twin-stage canvas { touch-action: none; }
+.provTable { width: 100%; border-collapse: collapse; margin: 10px 0 12px; font-size: 12px; }
+.provTable th { text-align: left; font-size: 10px; letter-spacing: 0.08em; color: #5e6e5c; padding: 8px; border-bottom: 1px solid #dfe8dc; }
+.provTable td { padding: 9px 8px; border-bottom: 1px solid #edf1ec; vertical-align: top; color: #33463a; line-height: 1.5; }
+@media (max-width: 700px) { .provTable, .provTable tbody, .provTable tr, .provTable td { display: block; } .provTable thead { display: none; } .provTable td { border: 0; padding: 4px 0; } .provTable tr { padding: 8px 0; border-bottom: 1px solid #e3e9df; } }
+
+    </style>
+  </head>
+  <body>
+    <a class="skipLink" href="#pageTitle">Skip to content</a>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="logo">
+          <div class="mark">
+            <svg width="25" height="25" viewBox="0 0 28 28" fill="none">
+              <path
+                d="M14 24V7M14 12C9 10 7 6 7 3c6 1 9 4 7 9ZM14 16c4-6 8-7 12-6-1 7-6 9-12 9"
+                stroke="#152d22"
+                stroke-width="2.5"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </div>
+          <div class="brand">canopyguard<small>DRIFT INTELLIGENCE</small></div>
+        </div>
+        <p class="navtitle">FIELD COMMAND</p>
+        <div class="nav" id="nav">
+          <button class="navbtn active" data-page="overview">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="8" height="8" rx="2" />
+              <rect x="14" y="3" width="7" height="5" rx="2" />
+              <rect x="14" y="11" width="7" height="10" rx="2" />
+              <rect x="3" y="14" width="8" height="7" rx="2" />
+            </svg>
+            Overview</button
+          ><button class="navbtn" data-page="lab">
+            <svg viewBox="0 0 24 24"><path d="M6 20V9m6 11V4m6 16v-7M3 20h18" /></svg> Weather lab</button
+          ><button class="navbtn" data-page="planner">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="5" width="18" height="16" rx="2" />
+              <path d="M7 3v4m10-4v4M3 10h18" />
+            </svg>
+            Window planner</button
+          ><button class="navbtn" data-page="log">
+            <svg viewBox="0 0 24 24">
+              <path d="M8 4h12v16H5V7m0-3v5h5" />
+              <path d="M9 12h7m-7 4h7" />
+            </svg>
+            Decision log</button
+          ><button class="navbtn" data-page="science">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9" />
+              <path d="M12 11v6m0-10v1" />
+            </svg>
+            Science & limits
+          </button>
+        </div>
+        <div class="sidebarBottom">
+          <div class="smallwhite">
+            <span class="sensorPulse"></span><span id="sourceTitle">Simulated readings</span>
+          </div>
+          <div class="mutedwhite">Two-height orchard intelligence</div>
+          <div class="sidebarFoot">
+            HACK ARIZONA AgX · 2026<br />Prototype / decision support only<br />Not a pesticide-label clearance<br /><span class="buildTag">v2.1.0 · build 4649a9628caa</span>
+          </div>
+        </div>
+      </aside>
+      <div class="navScrim" id="navScrim" aria-hidden="true"></div>
+      <main class="main">
+        <header class="topbar">
+          <div>
+            <button class="button light mobileMenu" id="menuBtn" aria-label="Open navigation menu" aria-controls="sidebar" aria-expanded="false">☰ Menu</button>
+            <div class="eyebrow">ORCHARD OPERATIONS / BLOCK A-07</div>
+            <h1 id="pageTitle" tabindex="-1">Spray decision overview</h1>
+            <p>
+              Fresno County, California <span style="padding: 0 7px">·</span> Five-foot and thirty-foot sensor tower
+            </p>
+          </div>
+          <div class="topRight">
+            <span class="pill"><span class="dot"></span><span id="sourcePill">SIMULATED READINGS</span></span
+            ><span class="pill" id="nowTime" title="Your local time">--:--</span
+            ><button class="button dark" id="captureTop">↗ Record decision</button>
+          </div>
+        </header>
+        <section id="overview" class="contentPage active">
+          <div class="v2-intro">
+            <div>
+              <div class="v2-kicker">NEW IN CANOPYGUARD 2.0 · ORCHARD ATMOSPHERE INTELLIGENCE</div>
+              <h2>From invisible risk to visible evidence.</h2>
+              <p>
+                Explore the atmosphere in 3D, check wind direction against nearby sensitive areas, and replay exactly
+                when the conditions change.
+              </p>
+            </div>
+            <div class="v2-actions">
+              <button class="v2-btn" data-v2page="twin">◈ Explore digital twin</button
+              ><button class="v2-btn secondary" data-v2page="validation">✓ View 40 test cases</button>
+            </div>
+          </div>
+          <div class="grid">
+            <div>
+              <div class="card hero">
+                <div class="heroGlow"></div>
+                <div class="heroContent">
+                  <div class="heroTop"><span class="liveDot"></span> MULTI-HEIGHT WEATHER ASSESSMENT</div>
+                  <div>
+                    <div class="status stop" id="statusMain">STOP</div>
+                    <div class="statusSub" id="statusSubtitle">Temperature inversion detected</div>
+                    <p class="heroText" id="statusExplain">
+                      Air above the orchard is warmer than air near the ground, which can trap fine spray droplets and
+                      carry them sideways.
+                    </p>
+                  </div>
+                  <div class="heroBottom">◉ Weather-only decision · product label and on-site checks required</div>
+                </div>
+                <div class="heroArt">
+                  <svg
+                    viewBox="0 0 360 300"
+                    preserveAspectRatio="xMidYMax meet"
+                    aria-label="Orchard cross-section illustration"
+                  >
+                    <defs>
+                      <linearGradient id="layer" x1="0" y1="0" x2="0" y2="1">
+                        <stop stop-color="#da7665" stop-opacity=".38" />
+                        <stop offset="1" stop-color="#f7b98f" stop-opacity=".02" />
+                      </linearGradient>
+                    </defs>
+                    <path id="heroLayer" d="M5 94Q162 65 357 89V217H0Z" fill="url(#layer)" />
+                    <g stroke="#70ab84" stroke-width="1.1" opacity=".5">
+                      <path d="M24 95Q60 108 102 90" />
+                      <path d="M154 87q65-20 120 1" />
+                      <path d="M12 123q90-10 160-8" />
+                      <path d="M193 119q80-13 148-4" />
+                    </g>
+                    <path d="M0 258Q135 251 360 258V300H0Z" fill="#2e4e37" />
+                    <g fill="#4d8159">
+                      <circle cx="73" cy="224" r="41" />
+                      <circle cx="130" cy="211" r="46" />
+                      <circle cx="228" cy="221" r="46" />
+                      <circle cx="297" cy="215" r="42" />
+                    </g>
+                    <g fill="#69996a">
+                      <circle cx="56" cy="213" r="32" />
+                      <circle cx="117" cy="205" r="37" />
+                      <circle cx="209" cy="212" r="37" />
+                      <circle cx="284" cy="207" r="37" />
+                    </g>
+                    <g stroke="#c5b68b" stroke-width="7">
+                      <path d="M72 300v-71M132 300v-71M226 300v-71M298 300v-71" />
+                    </g>
+                    <path d="M166 260V38" stroke="#d6e9d1" stroke-width="3" />
+                    <path d="M161 44h12M161 218h12" stroke="#d6e9d1" stroke-width="3" />
+                    <g fill="#c5ef74">
+                      <circle cx="166" cy="44" r="6" />
+                      <circle cx="166" cy="217" r="6" />
+                    </g>
+                    <g fill="#e4eddd" font-family="sans-serif" font-size="12" font-weight="bold">
+                      <text x="182" y="49">30 ft</text>
+                      <text x="182" y="220">5 ft</text>
+                    </g>
+                    <g fill="#f9b49b" font-size="12" font-family="sans-serif">
+                      <text x="27" y="77" id="heroLayerLabel">WARM AIR ALOFT</text>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+              <div class="metricstrip">
+                <div class="card metric">
+                  <span>Temperature delta</span><strong id="tempMetric" class="warning">+5.1°F</strong
+                  ><small>30 ft − 5 ft</small>
+                </div>
+                <div class="card metric">
+                  <span>Wind-speed shear</span><strong id="shearMetric">4.5</strong><small>mph across canopy</small>
+                </div>
+                <div class="card metric">
+                  <span>Wind-direction shift</span><strong id="turnMetric">52°</strong><small>shortest angle</small>
+                </div>
+                <div class="card metric">
+                  <span>Active triggers</span><strong id="triggersMetric">2</strong
+                  ><small id="triggerDetail">Requires attention</small>
+                </div>
+              </div>
+              <div class="card cardpad" style="margin-top: 16px">
+                <div class="sectiontitle">
+                  <div>
+                    <h2>The blind spot</h2>
+                    <p>Why a ground-only station can give false reassurance</p>
+                  </div>
+                  <span class="tag">JUDGE DEMO</span>
+                </div>
+                <div class="compare">
+                  <div class="comparePart">
+                    <h3>Conventional station · 5 ft</h3>
+                    <div class="big" id="groundVerdict">LOOKS OK</div>
+                    <p id="groundText">
+                      5.0 mph wind is inside the common 3–10 mph range. Upper-air risk is invisible.
+                    </p>
+                  </div>
+                  <div class="vs">VS</div>
+                  <div class="comparePart our">
+                    <h3>CanopyGuard · 5 + 30 ft</h3>
+                    <div class="big" id="multiVerdict">STOP</div>
+                    <p id="multiText">Inversion and wind shear detected above the orchard canopy.</p>
+                  </div>
+                </div>
+                <div class="signalRow" id="signalRow"></div>
+              </div>
+            </div>
+            <div>
+              <div class="card cardpad">
+                <div class="sectiontitle">
+                  <div>
+                    <h2>Vertical weather profile</h2>
+                    <p>Paired sensors expose hidden layers</p>
+                  </div>
+                  <span class="tag">2 HEIGHTS</span>
+                </div>
+                <div class="tower">
+                  <div class="towerlabel">ORCHARD ATMOSPHERE / PROFILE</div>
+                  <svg viewBox="0 0 450 270" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                      <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+                        <stop stop-color="#f5d8bd" />
+                        <stop offset="1" stop-color="#f4f8f0" />
+                      </linearGradient>
+                    </defs>
+                    <rect id="profileSky" width="450" height="270" fill="url(#sky)" opacity=".5" />
+                    <g stroke="#bfd8c4" stroke-dasharray="6 7"><path d="M0 59H450M0 184H450" /></g>
+                    <path d="M0 234Q225 222 450 235V270H0" fill="#d9e9c9" />
+                    <g stroke="#4e825e" stroke-width="5"><path d="M90 247v-48M148 250v-52M412 247v-50" /></g>
+                    <g fill="#659674">
+                      <circle cx="90" cy="204" r="25" />
+                      <circle cx="148" cy="206" r="23" />
+                      <circle cx="412" cy="201" r="27" />
+                    </g>
+                    <path d="M229 247V25" stroke="#567e68" stroke-width="4" />
+                    <path d="M221 59H237M221 184H237" stroke="#567e68" stroke-width="3" />
+                    <circle cx="229" cy="59" r="8" fill="#e38b6c" stroke="white" stroke-width="3" />
+                    <circle cx="229" cy="184" r="8" fill="#4b8b72" stroke="white" stroke-width="3" />
+                    <g fill="#44644f" font-family="DM Sans,sans-serif" font-size="11" font-weight="bold">
+                      <text x="20" y="63">30 FT</text>
+                      <text x="20" y="188">5 FT</text>
+                    </g>
+                    <g font-family="DM Sans,sans-serif" font-size="15" font-weight="bold">
+                      <text x="251" y="55" fill="#a55643" id="svgTopTemp">78.1°F</text>
+                      <text x="251" y="181" fill="#377b61" id="svgLowTemp">73.0°F</text>
+                    </g>
+                    <g font-family="DM Sans,sans-serif" font-size="12" font-weight="600">
+                      <text x="251" y="76" fill="#7a5a4f" id="svgTopWind">9.5 mph from 137°</text>
+                      <text x="251" y="202" fill="#3f6b57" id="svgLowWind">5.0 mph from 85°</text>
+                    </g>
+                  </svg>
+                </div>
+                <div class="pair">
+                  <div class="pairCell">
+                    <div class="alt">LOWER · 5 FEET</div>
+                    <div class="val" id="lowerPair">73.0°F</div>
+                    <div class="desc" id="lowerWind">5.0 mph · 85°</div>
+                  </div>
+                  <div class="pairCell">
+                    <div class="alt">UPPER · 30 FEET</div>
+                    <div class="val" id="upperPair">78.1°F</div>
+                    <div class="desc" id="upperWind">9.5 mph · 137°</div>
+                  </div>
+                </div>
+              </div>
+              <div class="card cardpad" style="margin-top: 16px">
+                <div class="sectiontitle">
+                  <div>
+                    <h2>What's driving the decision?</h2>
+                    <p>Plain-language alerts, ranked by severity</p>
+                  </div>
+                </div>
+                <div class="alerts" id="alerts"></div>
+              </div>
+            </div>
+          </div>
+          <div class="grid" style="margin-top: 16px">
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Illustrative temperature trend</h2>
+                  <p>Synthetic 12-sample lead-in ending at the current readings · not stored sensor history</p>
+                </div>
+                <span class="tag">SYNTHETIC</span>
+              </div>
+              <div class="chartWrap">
+                <canvas
+                  id="trendCanvas"
+                  role="img"
+                  aria-label="Simulated recent temperatures at five and thirty feet"
+                ></canvas>
+              </div>
+              <div class="chartFoot">
+                <span class="dotLegend">Upper temperature · 30 ft</span
+                ><span class="dotLegend two">Lower temperature · 5 ft</span><span>5-minute steps · illustrative</span>
+              </div>
+            </div>
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Run the judge demo</h2>
+                  <p>One click to reveal what the tower detects</p>
+                </div>
+              </div>
+              <div class="scenarios" id="scenarioGrid"></div>
+              <div class="row" style="margin-top: 15px">
+                <span class="footnote" style="margin: 0">Every scenario uses clearly labeled simulated values.</span
+                ><button class="button light" id="simulateShift">Trigger weather shift</button
+                ><button class="button light" id="openLab">Customize ↗</button>
+              </div>
+            </div>
+          </div>
+          <div class="card cardpad" style="margin-top: 16px">
+            <div class="sectiontitle">
+              <div>
+                <h2>Latest audit events</h2>
+                <p>Each assessed sample records its inputs, status and triggers</p>
+              </div>
+              <button class="subtlelink" data-goto="log">View full decision history ↗</button>
+            </div>
+            <div class="scrollTable" id="recentTable" tabindex="0" role="region" aria-label="Latest audit events"></div>
+          </div>
+        </section>
+        <section class="contentPage" id="twin" aria-label="Interactive atmospheric digital twin">
+          <div class="v2-stack">
+            <div class="v2-head">
+              <div>
+                <div class="v2-overline">01 / INSTRUMENTED ORCHARD</div>
+                <h2>See what one weather station misses.</h2>
+                <p>
+                  An interactive, perspective-3D orchard atmosphere built from the two sensor heights. Animated tracers
+                  explain wind direction and stratification—not actual spray concentration.
+                </p>
+              </div>
+              <span class="v2-pill" id="twinState">STOP</span>
+            </div>
+            <div class="v2-toolbar">
+              <button id="scenePlay" class="v2-ctrl" type="button">Ⅱ Pause motion</button
+              ><button id="orbitLeft" class="v2-ctrl" aria-label="Rotate left">↶ Rotate</button
+              ><button id="orbitRight" class="v2-ctrl" aria-label="Rotate right">Rotate ↷</button
+              ><button id="zoomOut" class="v2-ctrl" type="button" aria-label="Zoom out">−</button
+              ><button id="zoomIn" class="v2-ctrl" type="button" aria-label="Zoom in">+</button
+              ><button id="resetOrbit" class="v2-ctrl" type="button">Reset camera</button>
+              <div class="v2-toggles">
+                <label><input type="checkbox" id="toggleLayer" checked /> Thermal layer</label
+                ><label><input type="checkbox" id="toggleTracer" checked /> Airflow tracers</label>
+              </div>
+            </div>
+            <div class="v2-grid">
+              <div class="v2-card v2-pad">
+                <div class="twin-stage">
+                  <canvas
+                    id="twinCanvas"
+                    tabindex="0"
+                    aria-label="Interactive three-dimensional orchard illustration with sensor tower, wind direction arrows pointing downwind, and illustrative tracers. Drag or use arrow keys to rotate; plus and minus to zoom."
+                    role="img"
+                  ></canvas>
+                  <div class="twin-HUD">
+                    <div class="twin-hudBlock">
+                      <small>CANOPY / 30 FT SENSOR</small><b id="twinTempHigh">78.1°F</b
+                      ><span id="twinWindHigh">9.5 mph · from 137°</span>
+                    </div>
+                    <div class="twin-hudBlock">
+                      <small>GROUND / 5 FT SENSOR</small><b id="twinTempLow">73.0°F</b
+                      ><span id="twinWindLow">5.0 mph · from 85°</span>
+                    </div>
+                  </div>
+                  <div class="twin-bottom">
+                    ILLUSTRATIVE AIRFLOW · NOT A SPRAY-DRIFT, DEPOSITION OR CONCENTRATION MODEL · DRAG TO ROTATE · SCROLL OR +/− TO ZOOM
+                  </div>
+                </div>
+                <div class="twin-legend">
+                  <span><i class="low"></i>5-ft wind · arrow points downwind (reading is FROM)</span
+                  ><span><i class="upper"></i>30-ft wind · arrow points downwind (reading is FROM)</span
+                  ><span><i class="p"></i>Illustrative tracer (not spray)</span
+                  ><span>N marker = north (same as Boundary Lens)</span>
+                </div>
+              </div>
+              <div class="v2-stack">
+                <div class="v2-card v2-pad">
+                  <div class="v2-overline">CURRENT TWO-HEIGHT VERDICT</div>
+                  <h3 id="twinVerdict">Temperature inversion detected</h3>
+                  <p id="twinExplanation" class="v2-muted" style="margin-top: 8px"></p>
+                  <ul class="twinReasons" id="twinReasons" aria-label="All active triggers"></ul>
+                  <div class="v2-rule"></div>
+                  <div class="v2-facts">
+                    <div class="v2-fact"><b id="twinDelta">+5.1°F</b><span>TEMPERATURE DIFFERENCE</span></div>
+                    <div class="v2-fact"><b id="twinGap">4.5 mph</b><span>WIND-SPEED DIFFERENCE</span></div>
+                    <div class="v2-fact"><b id="twinTurn">52°</b><span>DIRECTION SHEAR</span></div>
+                    <div class="v2-fact">
+                      <b id="twinInputQuality">SIMULATED INPUTS</b><span>SENSOR PROVENANCE / QUALITY</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="v2-card v2-pad">
+                  <h3>Ground-only vs. two heights</h3>
+                  <div class="v2-comparison" style="margin-top: 15px">
+                    <div class="v2-comparePanel">
+                      <small>5 FT ONLY</small><b id="twinGround">LOOKS OK</b>
+                      <p>Only tests lower wind speed.</p>
+                    </div>
+                    <div class="v2-vs">VS</div>
+                    <div class="v2-comparePanel better">
+                      <small>PAIRED TOWER</small><b id="twinPaired">STOP</b>
+                      <p>Also tests upper temperature & wind.</p>
+                    </div>
+                  </div>
+                  <div class="v2-signal amber" style="margin-top: 12px">
+                    <span>!</span>
+                    <div id="twinBlindSpot">Ground-only station misses the upper-air hazard.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="v2-metricrow">
+              <div class="v2-metric"><small>Sensors</small><b>02</b><em>5 and 30 feet above ground</em></div>
+              <div class="v2-metric"><small>Scene mode</small><b>3D</b><em>Interactive perspective projection</em></div>
+              <div class="v2-metric"><small>Decision method</small><b>Rules</b><em>Explainable · no opaque AI</em></div>
+            </div>
+            <div class="v2-banner">
+              <strong>Scientific honesty:</strong> the sensor values come from the chosen simulation or imported file.
+              The animated particles, layer thickness, virtual orchard, and camera are educational graphics. They must
+              never be read as observed pesticide drift, predicted deposition, or proof of a safe spray window.
+            </div>
+          </div>
+        </section>
+        <section class="contentPage" id="boundary" aria-label="Wind direction and sensitive boundary screening">
+          <div class="v2-stack">
+            <div class="v2-head">
+              <div>
+                <div class="v2-overline">02 / RECEPTOR AWARENESS</div>
+                <h2>Where is the wind pointing?</h2>
+                <p>
+                  An interactive, schematic boundary lens. Drag sensitive-area markers to inspect whether their bearing
+                  overlaps the current directional screening sectors.
+                </p>
+              </div>
+              <span class="v2-pill" id="boundaryState">STOP</span>
+            </div>
+            <div class="v2-toolbar">
+              <span class="v2-pill cream">SCREENING SECTORS: ±29° PER SENSOR</span
+              ><button class="v2-ctrl" id="boundaryReset">↻ Reset layout</button
+              ><button class="v2-ctrl" id="boundaryRefresh">↻ Refresh readings</button
+              ><span class="v2-pill" id="boundaryWind">85° / 137° FROM</span>
+            </div>
+            <div class="v2-grid">
+              <div class="v2-card v2-pad">
+                <div class="boundary-stage">
+                  <svg
+                    id="boundarySVG"
+                    viewBox="0 0 960 630"
+                    role="group"
+                    aria-label="Schematic orchard plot with directional wind screening sectors and draggable nearby sensitive area markers"
+                  ></svg>
+                  <div class="boundary-legend">
+                    <strong>Direction-aware screening</strong><span class="lg5">— 5-ft wind TOWARD sector (±29°)</span
+                    ><br /><span class="lg30">— 30-ft wind TOWARD sector (±29°)</span>
+                  </div>
+                  <div class="boundary-end">SCHEMATIC / NOT A GEOGRAPHIC OR EXPOSURE MAP</div>
+                </div>
+                <p class="v2-smallprint" style="margin-top: 12px">
+                  Orange-green shading indicates an illustrative directional sector, not plume concentration, particle
+                  density, traveled distance, exposure level, or site-specific regulatory buffer. Position, geometry and
+                  scale are synthetic.
+                </p>
+              </div>
+              <div class="v2-stack">
+                <div class="v2-card v2-pad">
+                  <div class="v2-overline">OFF-TARGET SCREENING</div>
+                  <h3>Nearby sensitive areas</h3>
+                  <p class="v2-muted" style="margin-top: 5px">
+                    Move markers on the diagram. Bearing alignment refreshes immediately.
+                  </p>
+                  <div class="v2-rule"></div>
+                  <div id="receptorList"></div>
+                  <div class="v2-rule"></div>
+                  <div class="v2-minirow">
+                    <b>Directionally aligned sectors</b><span id="boundaryAlignment">—</span>
+                  </div>
+                </div>
+                <div class="v2-card v2-pad">
+                  <h3>Does the lower station see it?</h3>
+                  <div class="v2-comparison" style="margin-top: 15px">
+                    <div class="v2-comparePanel">
+                      <small>GROUND WIND ONLY</small><b id="boundaryGround">LOOKS OK</b>
+                    </div>
+                    <div class="v2-vs">VS</div>
+                    <div class="v2-comparePanel better">
+                      <small>VERTICAL SCREEN</small><b id="boundaryPaired">STOP</b>
+                    </div>
+                  </div>
+                  <p id="boundaryDetails" class="v2-muted" style="margin-top: 13px"></p>
+                </div>
+                <div class="v2-signal">
+                  <span>!</span>
+                  <div>
+                    Wind direction is meteorological <strong>FROM</strong>. Directional sectors show where air generally
+                    moves <strong>TOWARD</strong>, but do not determine whether a receptor will be exposed. Confirm
+                    actual geography, topography, equipment, label buffers, and on-site conditions.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="contentPage" id="replay" aria-label="Replay simulated weather event">
+          <div class="v2-stack">
+            <div class="v2-head">
+              <div>
+                <div class="v2-overline">03 / TIME-SERIES FORENSICS</div>
+                <h2>Watch an inversion evolve.</h2>
+                <p>
+                  Scrub a scripted early-morning series to see the moment the elevated air stops being warmer than the
+                  surface. Each frame is processed by the same decision engine.
+                </p>
+              </div>
+              <span class="v2-pill cream">17 LABELED SYNTHETIC FRAMES</span>
+            </div>
+            <div class="v2-card v2-pad">
+              <div class="v2-grid equal">
+                <div>
+                  <div class="v2-overline">MORNING EVENT / DEMO TIMELINE</div>
+                  <div
+                    id="replayClock"
+                    style="
+                      font-size: 52px;
+                      line-height: 1.12;
+                      font-weight: 850;
+                      letter-spacing: -0.07em;
+                      color: #244634;
+                    "
+                  >
+                    05:30
+                  </div>
+                  <p class="v2-muted" style="margin-top: 5px">
+                    Synthetic scripted morning · date-free local clock labels · 15-minute steps
+                  </p>
+                  <div class="replay-timeline" id="replayTimeline"></div>
+                  <div class="replay-timeLabels"><span>05:30</span><span>07:30</span><span>09:30</span></div>
+                  <input
+                    class="replay-range"
+                    id="replayScrub"
+                    type="range"
+                    min="0"
+                    max="16"
+                    value="0"
+                    aria-label="Choose replay frame"
+                  />
+                  <div class="replay-switch">
+                    <button class="v2-ctrl selected" id="replayPlay">▶ Play sequence</button
+                    ><button class="v2-ctrl" id="replayReset">↻ Restart</button
+                    ><button class="v2-ctrl" id="replayApply">Apply this frame to live dashboard</button
+                    ><button class="v2-ctrl" id="replayExport">↓ Export event</button>
+                  </div>
+                </div>
+                <div>
+                  <div class="v2-overline">AT THE SELECTED MOMENT</div>
+                  <div class="v2-readout stop" id="replayStatus">STOP</div>
+                  <p id="replayReason" class="v2-muted" style="min-height: 42px; margin-top: 10px"></p>
+                  <div class="v2-rule"></div>
+                  <div class="v2-facts">
+                    <div class="v2-fact"><b id="replayTemp">+5°F</b><span>30 FT − 5 FT</span></div>
+                    <div class="v2-fact"><b id="replayWind">4.6 / 7.6 mph</b><span>LOWER / UPPER WIND</span></div>
+                  </div>
+                  <div class="v2-minirow" style="margin-top: 18px">
+                    <b>Ground-only screening</b><span id="replayGround">LOOKS OK</span>
+                  </div>
+                  <div class="v2-minirow"><b>Paired decision</b><span id="replayPaired">STOP</span></div>
+                  <p class="v2-smallprint">
+                    Frame <span id="replayCount">1 / 17</span>. A change in sample status does not constitute a forecast
+                    or indicate real spray clearance.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="v2-banner">
+              <strong>What this shows:</strong> a single snapshot can hide how quickly a morning inversion forms or breaks.
+              All 17 frames are one deliberately scripted synthetic example run through the same decision engine — not
+              recorded sensor history and not a forecast.
+            </div>
+          </div>
+        </section>
+        <section class="contentPage" id="validation" aria-label="Labeled weather test benchmark">
+          <div class="v2-stack">
+            <div class="v2-head">
+              <div>
+                <div class="v2-overline">04 / TESTED, NOT JUST DEMONSTRATED</div>
+                <h2>Decision-engine evidence lab.</h2>
+                <p>
+                  40 labeled synthetic weather cases, computed against the live rules engine with fail/pass reporting.
+                  Unlike a pretty mockup, these tests probe exact boundaries, instrument failures, and hidden hazards.
+                </p>
+              </div>
+              <span class="v2-pill good" id="benchStatus">TESTING…</span>
+            </div>
+            <div class="v2-grid three">
+              <div class="v2-card v2-pad">
+                <div class="v2-kpiNum" id="benchPassed">—</div>
+                <p class="v2-kpiLabel">Rule assertions passed</p>
+              </div>
+              <div class="v2-card v2-pad">
+                <div class="v2-kpiNum" id="benchMissed">—</div>
+                <p class="v2-kpiLabel">Cases where ground-only wind screening misses a caution or stop</p>
+              </div>
+              <div class="v2-card v2-pad">
+                <div class="v2-kpiNum" id="benchStops">—</div>
+                <p class="v2-kpiLabel">Cases classified STOP by paired screening</p>
+              </div>
+            </div>
+            <div class="v2-card v2-pad">
+              <div class="v2-head">
+                <div>
+                  <h3>Synthetic benchmark explorer</h3>
+                  <p>Load any case to push its readings into the live dashboard and the timestamped audit log.</p>
+                </div>
+                <div class="v2-toolbar">
+                  <select class="v2-ctrl" id="validationFilter" aria-label="Filter test scenarios"></select
+                  ><button class="v2-ctrl" id="benchmarkRun">↻ Run all tests</button
+                  ><button class="v2-ctrl" id="exportBenchmark">↓ Export JSON</button>
+                </div>
+              </div>
+              <p class="v2-smallprint" id="benchmarkCount" role="status" style="margin-top: 14px"></p>
+              <div class="v2-tableWrap" style="margin-top: 8px" tabindex="0" role="region" aria-label="Synthetic benchmark results">
+                <table class="v2-testtable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>WEATHER CONDITION</th>
+                      <th>GROUP</th>
+                      <th>LABELED</th>
+                      <th>ENGINE</th>
+                      <th>5-FT ONLY</th>
+                      <th>RESULT</th>
+                      <th>DEMO</th>
+                    </tr>
+                  </thead>
+                  <tbody id="benchmarkTable"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="v2-grid equal">
+              <div class="v2-card v2-pad">
+                <h3>What these tests do prove</h3>
+                <p class="v2-muted" style="margin-top: 9px">
+                  The current deterministic rules behave as specified on these 40 inputs: inversion detection,
+                  wind-boundary checks, shear thresholds, wrap-around direction math, stale/invalid inputs and
+                  volatility cautions. Regression tests are reproducible and downloadable.
+                </p>
+                <div class="v2-rule"></div>
+                <button class="v2-ctrl selected" id="loadGroundBlindspot">▶ Replay the hidden-risk case</button>
+              </div>
+              <div class="v2-card v2-pad">
+                <h3>What they do not prove</h3>
+                <p class="v2-muted" style="margin-top: 9px">
+                  They are engineered synthetic labels produced for rule testing, not independently annotated agronomic
+                  observations. They cannot establish field accuracy, false-positive rates, chemical deposition, drift
+                  transport, or regulatory compliance. Field validation needs calibrated sensor towers, weather logs and
+                  specialist oversight.
+                </p>
+                <div class="v2-rule"></div>
+                <button class="v2-ctrl" id="benchmarkLive">↗ Open weather lab</button>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="lab" class="contentPage">
+          <div class="fullgrid">
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Weather lab · manipulate the invisible</h2>
+                  <p>Change a reading, run the transparent rules engine, and see the decision update</p>
+                </div>
+                <span class="tag">MANUAL / SIMULATED</span>
+              </div>
+              <div class="row">
+                <b>Sensor tower inputs</b
+                ><span class="footnote" style="margin: 0"
+                  >Temperature °F · Wind mph · Direction ° clockwise from north</span
+                >
+              </div>
+              <div class="divider"></div>
+              <p class="tableHead">Lower sensor — 5 feet</p>
+              <div class="sliderGrid" style="margin-top: 12px">
+                <label class="inputField"
+                  >Temperature °F<input type="number" id="tempLow" value="73" step="0.1" /></label
+                ><label class="inputField"
+                  >Wind speed mph<input type="number" id="speedLow" value="5" min="0" max="150" step="0.1" /></label
+                ><label class="inputField"
+                  >Wind direction °<input type="number" id="dirLow" value="85" min="0" max="360" step="1" /></label
+                ><label class="inputField"
+                  >Sensor age (min)<input type="number" id="ageLow" value="1" min="0" step="1"
+                /></label>
+              </div>
+              <div class="divider"></div>
+              <p class="tableHead">Upper sensor — 30 feet</p>
+              <div class="sliderGrid" style="margin-top: 12px">
+                <label class="inputField"
+                  >Temperature °F<input type="number" id="tempHigh" value="78.1" step="0.1" /></label
+                ><label class="inputField"
+                  >Wind speed mph<input type="number" id="speedHigh" value="9.5" min="0" max="150" step="0.1" /></label
+                ><label class="inputField"
+                  >Wind direction °<input type="number" id="dirHigh" value="137" min="0" max="360" step="1" /></label
+                ><label class="inputField"
+                  >Sensor age (min)<input type="number" id="ageHigh" value="1" min="0" step="1"
+                /></label>
+              </div>
+              <div class="divider"></div>
+              <p class="tableHead">Application / label inputs</p>
+              <div class="sliderGrid" style="margin-top: 12px">
+                <label class="inputField"
+                  >Product volatility<select id="volatility">
+                    <option value="low">Low / unknown</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select></label
+                ><label class="inputField"
+                  >Label minimum wind<input type="number" id="windMin" value="3" min="0" max="150" step="0.5" /></label
+                ><label class="inputField"
+                  >Label maximum wind<input type="number" id="windMax" value="10" min="0" max="150" step="0.5" /></label
+                ><label class="inputField"
+                  >Application method<select id="method">
+                    <option value="Airblast sprayer">Airblast sprayer</option>
+                    <option value="Ground boom">Ground boom</option>
+                    <option value="Other">Other</option>
+                  </select></label
+                >
+              </div>
+              <p class="footnote">
+                The default wind limits come from UC IPM general guidance and are not a representation of a specific
+                product label. Replace with actual label restrictions. The wind-shear cutoffs in this demo are
+                configurable heuristics, not regulatory thresholds.
+              </p>
+              <div class="row" style="margin-top: 18px">
+                <div class="toolbar">
+                  <button class="button dark" id="assessBtn">Analyze & record</button
+                  ><button class="button light" id="uploadBtn">Import tower JSON</button
+                  ><button class="button light" id="sampleTowerBtn">↓ Sample tower file</button
+                  ><button class="button light" id="resetLab">↺ Reset to demo</button
+                  ><input class="hidden" type="file" id="jsonInput" accept=".json,application/json" />
+                </div>
+                <div class="labVerdict"><span class="tag" id="labResult" aria-live="polite">STOP</span><small id="labReasons"></small></div>
+              </div>
+              <p class="footnote" id="importNote">
+                Import accepts one JSON object (or the first row of an array) with 5-ft / 30-ft temperature (°F), wind
+                speed (mph) and FROM direction (°), plus sensor ages in minutes or ISO-8601 timestamps with a UTC offset.
+                Missing timestamps are treated as invalid, never as fresh.
+              </p>
+            </div>
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Threshold transparency</h2>
+                  <p>No black-box score, no fabricated regulatory limits</p>
+                </div>
+              </div>
+              <div class="methods">
+                <p>
+                  <b>STOP</b> if any valid measured upper temperature is warmer than the lower temperature, wind at
+                  either height is outside your configured limits, or either reading is missing/stale. Severe shear also
+                  generates a conservative STOP in this prototype.
+                </p>
+                <p style="margin-top: 12px">
+                  <b>CAUTION</b> for moderate vertical wind shear or elevated product-volatility concerns.
+                  <b>GO</b> means no configured weather trigger fired; it never authorizes application.
+                </p>
+                <p class="footnote">
+                  Illustrative wind-shear defaults: 4 mph or 45° → CAUTION; 6 mph or 90° → STOP. These are demo alert
+                  settings, not validated legal or scientific thresholds.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="planner" class="contentPage">
+          <div class="fullgrid">
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>Next spray-check opportunities</h2>
+                  <p>
+                    Regional forecasts suggest when to recheck; only on-site paired sensors can establish an inversion
+                    assessment
+                  </p>
+                </div>
+                <button class="button dark" id="loadForecast">↻ Load regional forecast</button>
+              </div>
+              <div class="row">
+                <span id="forecastSource" class="tag caution">ILLUSTRATIVE HOURS · NOT A FORECAST</span
+                ><span class="footnote" style="margin: 0">Fresno, CA · 36.74°N, 119.79°W</span>
+              </div>
+              <p class="footnote" id="forecastLimits"></p>
+              <p class="footnote" id="forecastStatus" role="status">Placeholder hours until you load the optional regional forecast.</p>
+              <div id="forecastGrid" class="forecast" style="margin-top: 16px"></div>
+              <div class="footnote">
+                Forecast sources provide modeled regional surface wind, temperature and rain potential, not a measured
+                5-ft / 30-ft orchard profile. A candidate window is not authorization to spray. Check on-site
+                instruments, wind shear, precipitation, product label, neighbors and applicable rules before
+                application.
+              </div>
+            </div>
+            <div class="card cardpad">
+              <div class="sectiontitle">
+                <div>
+                  <h2>How the planner works</h2>
+                  <p>Two distinct evidence layers, never mixed</p>
+                </div>
+              </div>
+              <div class="compare">
+                <div class="comparePart">
+                  <h3>1. Regional forecast</h3>
+                  <div class="big" style="font-size: 19px">PRE-SCREEN</div>
+                  <p>
+                    Wind at approximately 10 m, rain probability and temperatures from a forecast model. Identify
+                    potentially suitable check times.
+                  </p>
+                </div>
+                <div class="vs">→</div>
+                <div class="comparePart our">
+                  <h3>2. Orchard measurements</h3>
+                  <div class="big" style="font-size: 19px; color: #2c7456">VERIFY</div>
+                  <p>
+                    Recheck temperatures and wind at 5 ft and 30 ft at the actual spray location. The measured status
+                    takes precedence.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="log" class="contentPage">
+          <div class="card cardpad">
+            <div class="sectiontitle">
+              <div>
+                <h2>Time-stamped decision log</h2>
+                <p>Browser-local history · exact readings, triggers and source for each assessment · <span id="logCount"></span></p>
+              </div>
+              <div class="toolbar">
+                <button class="button light" id="exportCsv">↓ Export CSV</button
+                ><button class="button light" id="exportJson">↓ Export JSON</button
+                ><button class="button light" id="printLog">⎙ Print</button
+                ><button class="button light" id="clearLog">Clear</button>
+              </div>
+            </div>
+            <div id="fullLogTable" class="scrollTable" tabindex="0" role="region" aria-label="Full decision log"></div>
+            <p class="footnote">
+              Records are saved in this device's browser only. This prototype does not provide user accounts, shared
+              records, regulatory-grade audit storage, calibrated sensor validation or secure cloud retention.
+            </p>
+          </div>
+        </section>
+        <section id="science" class="contentPage">
+          <div class="card cardpad methods">
+            <div class="eyebrow">METHODS / TRANSPARENCY</div>
+            <h2 style="font-size: 25px; margin-top: 9px">Designed to explain, not overpromise.</h2>
+            <h3>Temperature inversion</h3>
+            <p>
+              Set <code>ΔT = T(30 ft) − T(5 ft)</code>. When ΔT is positive, the upper level is warmer: that meets the
+              challenge definition of a temperature inversion. An inversion is grounds for STOP. Real instruments
+              require calibration, quality checks and measurement uncertainty handling.
+            </p>
+            <h3>Wind screening</h3>
+            <p>
+              Check wind speed at both heights against configurable limits, initially 3–10 mph per UC IPM general
+              guidance. Compute absolute speed difference and shortest circular direction difference
+              (<code>min(|a−b|,360−|a−b|)</code>). Direction change thresholds are prototype-specific heuristics and
+              should be validated with agricultural meteorology experts.
+            </p>
+            <h3>Data provenance &amp; units</h3>
+            <table class="provTable">
+              <thead><tr><th scope="col">Kind</th><th scope="col">Examples</th><th scope="col">Where it comes from</th></tr></thead>
+              <tbody>
+                <tr><td><b>Input readings</b></td><td>T at 5 ft / 30 ft (°F), wind speed (mph), wind direction (° true, meteorological FROM), sensor age (min)</td><td>Simulated scenarios, manual entry or an imported JSON file — labelled in the header pill and in every log row. No live sensor is connected.</td></tr>
+                <tr><td><b>Configured thresholds</b></td><td>Min/max wind (default 3–10 mph), stale after 10 min, shear 4/6 mph and 45°/90°</td><td>User settings and prototype heuristics — replace with the product label and local rules.</td></tr>
+                <tr><td><b>Derived metrics</b></td><td>ΔT = T30 − T5, |wind gap|, shortest direction difference</td><td>Computed by the decision engine (v2.1.0) from the input readings.</td></tr>
+                <tr><td><b>Illustrative only</b></td><td>3D tracers, thermal band, boundary sectors and receptor positions, trend lead-in, replay frames, placeholder forecast hours</td><td>Explanatory graphics and synthetic data. Never measured drift, deposition, exposure or a forecast.</td></tr>
+              </tbody>
+            </table>
+            <p>Readings outside plausible ranges (−60–140 °F, 0–150 mph, 0–360°), negative sensor ages (future timestamps), imported files without timestamped readings, or unknown values are treated as <b>invalid → STOP</b>, never as GO. Times in the log are shown in your browser's time zone and exported as UTC (ISO-8601 “Z”).</p>
+            <h3>Source credibility</h3>
+            <p>
+              On-site sensors are the primary evidence. Regional API forecasts can guide the timing of a *future on-site
+              check*, but their altitude, terrain and model grid do not establish a canopy-layer inversion.
+              Demonstration values are simulated, not real orchard observations.
+            </p>
+            <h3>Safety and legal limitation</h3>
+            <p>
+              This is a hackathon decision-support prototype, not an approved spray-control system. It does not
+              determine legal compliance or guarantee zero drift. Always follow product labels, assess sensitive areas
+              and buffer zones, confirm calibrated equipment and inspect field conditions. Do not spray based solely on
+              a GO indication.
+            </p>
+            <h3>Research sources</h3>
+            <p>
+              <a
+                target="_blank"
+                rel="noopener"
+                href="https://ucanr.edu/blog/topics-subtropics/article/surface-inversions-cause-spray-drift"
+                >UC ANR: Surface inversions cause spray drift ↗</a
+              ><br /><a
+                target="_blank"
+                rel="noopener"
+                href="https://ipm.ucanr.edu/environmental-protection-and-pesticide-stewardship/mitigating-pesticide-hazards/"
+                >UC IPM: Mitigating pesticide hazards ↗</a
+              ><br /><a target="_blank" rel="noopener" href="https://ucanr.edu/site/airblast-spray-advisor"
+                >UC ANR: Airblast Spray Advisor ↗</a
+              ><br /><a target="_blank" rel="noopener" href="https://www.weather.gov/documentation/services-web-API"
+                >NWS API documentation ↗</a
+              ><br /><a target="_blank" rel="noopener" href="https://open-meteo.com/en/docs"
+                >Open-Meteo forecast API ↗</a
+              >
+            </p>
+          </div>
+        </section>
+      </main>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script>
+      /* CanopyGuard decision engine — the single source of truth for GO / CAUTION / STOP.
+ * This exact file is inlined into index.html by tools/build.cjs and loaded directly by the
+ * Node regression suites (tests/*.cjs), so the browser and the tests always run the same rules.
+ * Weather screening only: GO never authorizes an application. */
+(function (root) {
+  'use strict';
+
+  var ENGINE_VERSION = '2.1.0';
+
+  // Prototype heuristics, not regulatory or label thresholds (see Science & limits).
+  var RULES = Object.freeze({
+    staleMinutes: 10, // a sensor reading older than this (minutes) is STALE
+    shearCautionMph: 4,
+    shearStopMph: 6,
+    turnCautionDeg: 45,
+    turnStopDeg: 90,
+  });
+
+  // Physically plausible input ranges. Values outside are treated as sensor/entry faults.
+  var PLAUSIBLE = Object.freeze({
+    tempF: [-60, 140],
+    windMph: [0, 150],
+    dirDeg: [0, 360],
+    limitMph: [0, 150],
+  });
+
+  var VOLATILITY = ['low', 'medium', 'high'];
+
+  var FIELDS = [
+    ['tLow', '5-ft temperature', 'tempF'],
+    ['tHigh', '30-ft temperature', 'tempF'],
+    ['wLow', '5-ft wind speed', 'windMph'],
+    ['wHigh', '30-ft wind speed', 'windMph'],
+    ['dLow', '5-ft wind direction', 'dirDeg'],
+    ['dHigh', '30-ft wind direction', 'dirDeg'],
+    ['ageLow', '5-ft sensor age', 'age'],
+    ['ageHigh', '30-ft sensor age', 'age'],
+    ['windMin', 'minimum wind limit', 'limitMph'],
+    ['windMax', 'maximum wind limit', 'limitMph'],
+  ];
+
+  // Round away binary floating-point noise (e.g. 10.1 - 4.1) before threshold comparisons.
+  function clean(v) {
+    return Math.round(v * 1000) / 1000;
+  }
+
+  function fixed(v, n) {
+    return Number(v).toFixed(n === undefined ? 1 : n);
+  }
+
+  // Shortest angle between two bearings, 0–180°. 359° vs 1° → 2°.
+  function circularDiff(a, b) {
+    var d = Math.abs((((a - b) % 360) + 360) % 360);
+    return Math.min(d, 360 - d);
+  }
+
+  // Returns a list of human-readable input problems (empty when every critical value is usable).
+  function validate(d) {
+    var problems = [];
+    if (!d || typeof d !== 'object') return ['no readings supplied'];
+    FIELDS.forEach(function (f) {
+      var v = d[f[0]];
+      if (typeof v !== 'number' || !Number.isFinite(v)) {
+        problems.push(f[1] + ' is missing or non-numeric');
+        return;
+      }
+      if (f[2] === 'age') {
+        if (v < 0) problems.push(f[1] + ' is negative (timestamp in the future)');
+        return;
+      }
+      var range = PLAUSIBLE[f[2]];
+      if (v < range[0] || v > range[1]) problems.push(f[1] + ' is outside ' + range[0] + '–' + range[1]);
+    });
+    if (
+      typeof d.windMin === 'number' &&
+      typeof d.windMax === 'number' &&
+      Number.isFinite(d.windMin) &&
+      Number.isFinite(d.windMax) &&
+      d.windMax <= d.windMin
+    )
+      problems.push('maximum wind limit must be greater than the minimum');
+    if (d.volatility !== undefined && VOLATILITY.indexOf(d.volatility) < 0)
+      problems.push('product volatility "' + String(d.volatility).slice(0, 20) + '" is not recognised');
+    return problems;
+  }
+
+  function assess(d) {
+    var alerts = [];
+    var problems = validate(d);
+    if (problems.length) {
+      alerts.push({
+        level: 'STOP',
+        code: 'INVALID',
+        title: 'Invalid or missing tower readings',
+        msg:
+          'Cannot screen: ' +
+          problems.slice(0, 3).join('; ') +
+          (problems.length > 3 ? ' (+' + (problems.length - 3) + ' more)' : '') +
+          '. Do not rely on this assessment until the readings are corrected.',
+      });
+      return {
+        status: 'STOP',
+        alerts: alerts,
+        delta: NaN,
+        windGap: NaN,
+        turn: NaN,
+        ground: 'UNKNOWN',
+        problems: problems,
+        engineVersion: ENGINE_VERSION,
+      };
+    }
+
+    var delta = clean(d.tHigh - d.tLow);
+    var gap = clean(Math.abs(d.wHigh - d.wLow));
+    var turn = clean(circularDiff(d.dLow, d.dHigh));
+    var ground = d.wLow < d.windMin || d.wLow > d.windMax ? 'STOP' : 'LOOKS OK';
+
+    if (d.ageLow > RULES.staleMinutes || d.ageHigh > RULES.staleMinutes)
+      alerts.push({
+        level: 'STOP',
+        code: 'STALE',
+        title: 'Sensor readings are stale',
+        msg:
+          'At least one sensor is older than ' +
+          RULES.staleMinutes +
+          ' minutes (5 ft: ' +
+          fixed(d.ageLow, 0) +
+          ' min, 30 ft: ' +
+          fixed(d.ageHigh, 0) +
+          ' min). Refresh or inspect the sensor tower before any application.',
+      });
+    if (delta > 0)
+      alerts.push({
+        level: 'STOP',
+        code: 'INVERSION',
+        title: 'Temperature inversion detected',
+        msg:
+          'Upper air (30 ft) is ' +
+          fixed(delta) +
+          '°F warmer than air near the ground (5 ft). Stable layers may trap fine droplets and allow lateral drift.',
+      });
+    if (d.wLow < d.windMin || d.wHigh < d.windMin)
+      alerts.push({
+        level: 'STOP',
+        code: 'LOW_WIND',
+        title: 'Wind below the configured minimum',
+        msg:
+          'At least one height measures below ' +
+          fixed(d.windMin) +
+          ' mph (5 ft: ' +
+          fixed(d.wLow) +
+          ', 30 ft: ' +
+          fixed(d.wHigh) +
+          ' mph). Calm air may indicate weak mixing or variable drift.',
+      });
+    if (d.wLow > d.windMax || d.wHigh > d.windMax)
+      alerts.push({
+        level: 'STOP',
+        code: 'HIGH_WIND',
+        title: 'Wind above the configured maximum',
+        msg:
+          'At least one height exceeds ' +
+          fixed(d.windMax) +
+          ' mph (5 ft: ' +
+          fixed(d.wLow) +
+          ', 30 ft: ' +
+          fixed(d.wHigh) +
+          ' mph). Follow the product label; this screen does not pass.',
+      });
+    if (gap >= RULES.shearStopMph || turn >= RULES.turnStopDeg)
+      alerts.push({
+        level: 'STOP',
+        code: 'SEVERE_SHEAR',
+        title: 'Severe vertical wind shear',
+        msg:
+          'The two heights differ by ' +
+          fixed(gap) +
+          ' mph and ' +
+          Math.round(turn) +
+          '°. This prototype conservatively flags severe vertical separation as STOP.',
+      });
+    else if (gap >= RULES.shearCautionMph || turn >= RULES.turnCautionDeg)
+      alerts.push({
+        level: 'CAUTION',
+        code: 'SHEAR',
+        title: 'Wind changes substantially with height',
+        msg:
+          'The wind differs by ' +
+          fixed(gap) +
+          ' mph and ' +
+          Math.round(turn) +
+          '° between heights, which a ground-only station cannot see.',
+      });
+    if (d.volatility === 'medium' || d.volatility === 'high')
+      alerts.push({
+        level: 'CAUTION',
+        code: 'VOLATILITY',
+        title: 'Check product volatility and label',
+        msg:
+          'Selected volatility is ' +
+          d.volatility +
+          '. Vapor drift can continue after spraying; review the actual product requirements and conditions.',
+      });
+
+    var status = alerts.some(function (a) {
+      return a.level === 'STOP';
+    })
+      ? 'STOP'
+      : alerts.length
+        ? 'CAUTION'
+        : 'GO';
+    return {
+      status: status,
+      alerts: alerts,
+      delta: delta,
+      windGap: gap,
+      turn: turn,
+      ground: ground,
+      problems: [],
+      engineVersion: ENGINE_VERSION,
+    };
+  }
+
+  var api = {
+    ENGINE_VERSION: ENGINE_VERSION,
+    RULES: RULES,
+    PLAUSIBLE: PLAUSIBLE,
+    VOLATILITY: VOLATILITY,
+    assess: assess,
+    validate: validate,
+    circularDiff: circularDiff,
+  };
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  root.CanopyGuardEngine = api;
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+
+    </script>
+    <script>
+      /* CanopyGuard core UI: overview, weather lab, window planner, decision log, navigation.
+ * All GO / CAUTION / STOP results come from window.CanopyGuardEngine (src/js/engine.js). */
+(function () {
+  'use strict';
+  var Engine = window.CanopyGuardEngine;
+  if (!Engine) throw Error('CanopyGuard engine failed to load');
+  var assess = Engine.assess;
+
+  var LOG_KEY = 'canopyguard-audit-v1';
+  var LOG_LIMIT = 300;
+  var IMPORT_MAX_BYTES = 1024 * 1024;
+  var STATUSES = ['GO', 'CAUTION', 'STOP'];
+
+  // Demonstration scenarios. Every value here is simulated, never a real orchard reading.
+  var DEMOS = [
+    { key: 'inversion', name: 'Hidden inversion', note: 'Ground reads safe', values: [73, 78.1, 5, 9.5, 85, 137, 1, 1, 'low'] },
+    { key: 'shear', name: 'Upper wind shear', note: 'Direction reverses', values: [75, 73.8, 5.1, 8.6, 40, 148, 1, 1, 'low'] },
+    { key: 'calm', name: 'Calm air', note: 'Too little mixing', values: [71, 70.1, 1.6, 2, 105, 125, 1, 1, 'low'] },
+    { key: 'gusty', name: 'Strong upper wind', note: 'Canopy exceeds limit', values: [77, 75, 6.1, 12.3, 80, 95, 1, 1, 'low'] },
+    { key: 'clear', name: 'Clear conditions', note: 'No demo triggers', values: [77.5, 75, 5.5, 6.4, 110, 124, 1, 1, 'low'] },
+    { key: 'volatile', name: 'Volatile product', note: 'Extra product caution', values: [80, 78, 5.3, 6.1, 80, 95, 1, 1, 'high'] },
+    { key: 'stale', name: 'Sensor offline', note: 'Fail-safe decision', values: [76, 75, 5.5, 6.7, 90, 97, 1, 19, 'low'] },
+  ];
+
+  var SOURCES = {
+    simulated: { pill: 'SIMULATED READINGS', side: 'Simulated readings' },
+    manual: { pill: 'MANUAL ENTRY', side: 'Manually entered readings' },
+    imported: { pill: 'IMPORTED FILE', side: 'Readings from imported file' },
+  };
+
+  var state = {
+    data: demoClone(DEMOS[0]),
+    scenario: 'inversion',
+    source: 'simulated',
+    history: [],
+    forecasts: null,
+    forecastKind: 'sample',
+    storageWarned: false,
+  };
+  var listeners = [];
+
+  var inputNames = ['tempLow', 'tempHigh', 'speedLow', 'speedHigh', 'dirLow', 'dirHigh', 'ageLow', 'ageHigh', 'volatility', 'windMin', 'windMax', 'method'];
+  var dataKeys = ['tLow', 'tHigh', 'wLow', 'wHigh', 'dLow', 'dHigh', 'ageLow', 'ageHigh', 'volatility', 'windMin', 'windMax', 'method'];
+
+  var $ = function (id) {
+    return document.getElementById(id);
+  };
+
+  function demoClone(x) {
+    return {
+      tLow: x.values[0], tHigh: x.values[1], wLow: x.values[2], wHigh: x.values[3],
+      dLow: x.values[4], dHigh: x.values[5], ageLow: x.values[6], ageHigh: x.values[7],
+      volatility: x.values[8], windMin: 3, windMax: 10, method: 'Airblast sprayer',
+    };
+  }
+  function escapeHtml(x) {
+    return String(x == null ? '' : x).replace(/[&<>"']/g, function (s) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[s];
+    });
+  }
+  // Number formatter that never prints NaN / Infinity.
+  function rnd(v, n) {
+    var x = typeof v === 'number' ? v : NaN;
+    return Number.isFinite(x) ? x.toFixed(n === undefined ? 1 : n) : '—';
+  }
+  function deg(v) {
+    return typeof v === 'number' && Number.isFinite(v) ? Math.round(v) + '°' : '—°';
+  }
+  function tzLabel(date) {
+    try {
+      var part = new Intl.DateTimeFormat([], { timeZoneName: 'short' }).formatToParts(date).find(function (p) {
+        return p.type === 'timeZoneName';
+      });
+      return part ? part.value : '';
+    } catch (e) {
+      return '';
+    }
+  }
+  function clock() {
+    var now = new Date();
+    return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' ' + tzLabel(now);
+  }
+  function localStamp(iso) {
+    var d = new Date(iso);
+    if (!Number.isFinite(d.getTime())) return 'Unknown time';
+    return d.toLocaleString([], { year: 'numeric', month: 'short', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit', timeZoneName: 'short' });
+  }
+  function pClass(s) {
+    return s === 'STOP' ? 'stop' : s === 'CAUTION' ? 'caution' : 'go';
+  }
+
+  function syncInputs() {
+    var d = state.data;
+    inputNames.forEach(function (k, i) {
+      var v = d[dataKeys[i]];
+      $(k).value = typeof v === 'number' ? (Number.isFinite(v) ? String(Math.round(v * 100) / 100) : '') : v == null ? '' : v;
+      $(k).removeAttribute('aria-invalid');
+    });
+  }
+  function readInputs() {
+    var num = function (x) {
+      return String(x).trim() === '' ? NaN : Number(x);
+    };
+    var d = {};
+    inputNames.forEach(function (k, i) {
+      var raw = $(k).value;
+      d[dataKeys[i]] = k === 'volatility' || k === 'method' ? raw : num(raw);
+    });
+    state.data = d;
+  }
+  function markInvalidInputs() {
+    var d = state.data,
+      ranges = { tLow: 'tempF', tHigh: 'tempF', wLow: 'windMph', wHigh: 'windMph', dLow: 'dirDeg', dHigh: 'dirDeg', windMin: 'limitMph', windMax: 'limitMph' };
+    inputNames.forEach(function (k, i) {
+      var key = dataKeys[i],
+        v = d[key],
+        bad = false;
+      if (k === 'volatility' || k === 'method') return;
+      if (typeof v !== 'number' || !Number.isFinite(v)) bad = true;
+      else if (ranges[key]) {
+        var r = Engine.PLAUSIBLE[ranges[key]];
+        bad = v < r[0] || v > r[1];
+      } else bad = v < 0;
+      if (key === 'windMax' && Number.isFinite(d.windMin) && v <= d.windMin) bad = true;
+      if (bad) $(k).setAttribute('aria-invalid', 'true');
+      else $(k).removeAttribute('aria-invalid');
+    });
+  }
+
+  // ---------- browser-local decision log ----------
+  function sanitizeEntry(x) {
+    if (!x || typeof x !== 'object') return null;
+    if (STATUSES.indexOf(x.status) < 0) return null;
+    if (!Number.isFinite(new Date(x.at).getTime())) return null;
+    return {
+      at: String(x.at),
+      kind: String(x.kind || 'assessment').slice(0, 80),
+      source: String(x.source || 'unknown').slice(0, 40),
+      status: x.status,
+      codes: Array.isArray(x.codes) ? x.codes.map(String).slice(0, 12) : [],
+      reasons: Array.isArray(x.reasons) ? x.reasons.map(String).slice(0, 12) : [],
+      readings: x.readings && typeof x.readings === 'object' ? x.readings : {},
+      engineVersion: x.engineVersion ? String(x.engineVersion).slice(0, 20) : undefined,
+    };
+  }
+  function saveLog() {
+    try {
+      localStorage.setItem(LOG_KEY, JSON.stringify(state.history.slice(0, LOG_LIMIT)));
+      return true;
+    } catch (e) {
+      state.storageWarned = true;
+      return false;
+    }
+  }
+  function record(kind) {
+    var r = assess(state.data);
+    state.history.unshift({
+      at: new Date().toISOString(),
+      kind: kind || 'assessment',
+      source: state.source,
+      status: r.status,
+      codes: r.alerts.map(function (a) { return a.code; }),
+      reasons: r.alerts.map(function (a) { return a.title; }),
+      readings: Object.assign({}, state.data),
+      engineVersion: Engine.ENGINE_VERSION,
+    });
+    var trimmed = state.history.length > LOG_LIMIT;
+    state.history = state.history.slice(0, LOG_LIMIT);
+    var saved = saveLog();
+    updateTables();
+    toast('Decision recorded · ' + r.status + (trimmed ? ' · oldest entry rotated out (limit ' + LOG_LIMIT + ')' : '') +
+      (saved ? '' : ' · browser storage is unavailable or full — export the log to keep it'));
+  }
+
+  // ---------- rendering ----------
+  function render() {
+    var d = state.data,
+      r = assess(d),
+      desc = r.alerts[0],
+      ground = r.ground,
+      valid = r.alerts.every(function (a) { return a.code !== 'INVALID'; }),
+      inv = valid && r.delta > 0;
+    $('statusMain').textContent = r.status;
+    $('statusMain').className = 'status ' + pClass(r.status);
+    $('statusSubtitle').textContent = desc ? desc.title : 'Weather screening: no configured triggers';
+    $('statusExplain').textContent = desc
+      ? desc.msg
+      : 'Both measured heights are within configured limits. This is not spray clearance — verify the product label, site conditions and nearby sensitive areas.';
+    $('tempMetric').textContent = Number.isFinite(r.delta) ? (r.delta > 0 ? '+' : '') + rnd(r.delta) + '°F' : '—';
+    $('tempMetric').className = inv ? 'warning' : '';
+    $('shearMetric').textContent = Number.isFinite(r.windGap) ? rnd(r.windGap) : '—';
+    $('turnMetric').textContent = Number.isFinite(r.turn) ? Math.round(r.turn) + '°' : '—';
+    $('triggersMetric').textContent = r.alerts.length;
+    $('triggerDetail').textContent = r.status === 'GO' ? 'No configured alerts' : r.status === 'CAUTION' ? 'Review cautions' : 'Requires attention';
+    $('lowerPair').textContent = rnd(d.tLow) + '°F';
+    $('upperPair').textContent = rnd(d.tHigh) + '°F';
+    $('lowerWind').textContent = rnd(d.wLow) + ' mph · from ' + deg(d.dLow);
+    $('upperWind').textContent = rnd(d.wHigh) + ' mph · from ' + deg(d.dHigh);
+    $('svgTopTemp').textContent = rnd(d.tHigh) + '°F';
+    $('svgLowTemp').textContent = rnd(d.tLow) + '°F';
+    $('svgTopTemp').setAttribute('fill', inv ? '#a55643' : '#44644f');
+    $('svgTopWind').textContent = rnd(d.wHigh) + ' mph from ' + deg(d.dHigh);
+    $('svgLowWind').textContent = rnd(d.wLow) + ' mph from ' + deg(d.dLow);
+    $('heroLayer').setAttribute('opacity', inv ? '1' : '0.12');
+    $('heroLayerLabel').textContent = !valid ? 'READINGS INVALID' : inv ? 'WARM AIR ALOFT' : 'NO WARM LAYER';
+    $('heroLayerLabel').setAttribute('fill', inv ? '#f9b49b' : '#b9d7bd');
+    $('profileSky').setAttribute('opacity', inv ? '.5' : '.12');
+    $('groundVerdict').textContent = ground;
+    $('groundVerdict').style.color = ground === 'LOOKS OK' ? '#3f7a52' : '#b64f43';
+    $('groundText').textContent =
+      ground === 'LOOKS OK'
+        ? rnd(d.wLow) + ' mph is within your configured ground-level wind range. Temperature inversion and upper winds remain invisible.'
+        : ground === 'UNKNOWN'
+          ? 'Readings are missing or invalid, so even a ground-only screen cannot be evaluated.'
+          : 'Lower wind at ' + rnd(d.wLow) + ' mph is outside the configured ' + rnd(d.windMin) + '–' + rnd(d.windMax) + ' mph range.';
+    $('multiVerdict').textContent = r.status;
+    $('multiVerdict').style.color = r.status === 'GO' ? '#3d835a' : r.status === 'CAUTION' ? '#9a6a1f' : '#b64f43';
+    $('multiText').textContent = r.alerts.length
+      ? r.alerts.map(function (a) { return a.title; }).slice(0, 2).join('; ') + (r.alerts.length > 2 ? ' (+' + (r.alerts.length - 2) + ' more).' : '.')
+      : 'Both heights pass the configured weather checks. This is not spray clearance.';
+    $('signalRow').innerHTML = r.alerts.length
+      ? r.alerts.map(function (a) {
+          return '<span class="signal ' + (a.level === 'CAUTION' ? 'caution' : '') + '">' + escapeHtml(a.level + ' · ' + a.code.replace(/_/g, ' ')) + '</span>';
+        }).join('')
+      : '<span class="signal good">NO CONFIGURED WEATHER TRIGGERS</span>';
+    $('alerts').innerHTML = r.alerts.length
+      ? r.alerts.map(function (a) {
+          return '<div class="alert ' + (a.level === 'CAUTION' ? 'amber' : '') + '"><span class="alertIcon" aria-hidden="true">' + (a.level === 'STOP' ? '!' : '△') +
+            '</span><div><h3>' + escapeHtml(a.title) + ' <small class="alertCode">' + escapeHtml(a.level + ' · ' + a.code) + '</small></h3><p>' + escapeHtml(a.msg) + '</p></div></div>';
+        }).join('')
+      : '<div class="alert green"><span class="alertIcon" aria-hidden="true">✓</span><div><h3>No triggers in measured conditions</h3><p>Configured limits currently pass. Still verify label requirements, calibration, neighboring areas and the orchard before application.</p></div></div>';
+    $('labResult').textContent = r.status;
+    $('labResult').className = 'tag ' + pClass(r.status);
+    $('labReasons').textContent = r.alerts.length
+      ? r.alerts.map(function (a) { return a.code; }).join(' · ')
+      : 'No configured triggers';
+    var src = SOURCES[state.source] || SOURCES.simulated;
+    $('sourcePill').textContent = src.pill;
+    $('sourceTitle').textContent = src.side;
+    drawTrend();
+    forecastRender();
+    listeners.forEach(function (fn) {
+      try { fn(r); } catch (e) { if (window.console) console.error(e); }
+    });
+  }
+
+  function createScenarioButtons() {
+    var box = $('scenarioGrid');
+    box.innerHTML = DEMOS.map(function (s) {
+      var sel = state.scenario === s.key;
+      return '<button type="button" class="scenario ' + (sel ? 'selected' : '') + '" aria-pressed="' + sel + '" data-demo="' + s.key + '"><b>' +
+        escapeHtml(s.name) + '</b><small>' + escapeHtml(s.note) + '</small></button>';
+    }).join('');
+    box.querySelectorAll('[data-demo]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var s = DEMOS.find(function (x) { return x.key === btn.dataset.demo; });
+        loadScenario(s);
+      });
+    });
+  }
+  function loadScenario(s) {
+    state.scenario = s.key;
+    state.source = 'simulated';
+    state.data = demoClone(s);
+    syncInputs();
+    render();
+    createScenarioButtons();
+    record('scenario:' + s.key);
+  }
+
+  // Illustrative 12-sample trend that ends exactly at the current readings.
+  function drawTrend() {
+    var canvas = $('trendCanvas');
+    if (!canvas || !canvas.getContext) return;
+    var w = canvas.clientWidth,
+      h = canvas.clientHeight;
+    if (!w || !h) return;
+    var ratio = Math.min(3, window.devicePixelRatio || 1),
+      ctx = canvas.getContext('2d');
+    canvas.width = Math.round(w * ratio);
+    canvas.height = Math.round(h * ratio);
+    ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    var d = state.data;
+    ctx.font = '600 12px DM Sans, sans-serif';
+    if (!Number.isFinite(d.tLow) || !Number.isFinite(d.tHigh) || Math.abs(d.tLow) > 200 || Math.abs(d.tHigh) > 200) {
+      ctx.fillStyle = '#8a3b2f';
+      ctx.textAlign = 'center';
+      ctx.fillText('No valid temperatures to chart — correct the readings in the Weather lab.', w / 2, h / 2);
+      ctx.textAlign = 'left';
+      return;
+    }
+    var low = [],
+      high = [];
+    for (var i = 0; i < 12; i++) {
+      var k = (11 - i) / 11; // 1 at the oldest sample, 0 at "now"
+      low.push(d.tLow + (Math.sin(i * 0.56 + 1) * 0.7 + 0.8) * k);
+      high.push(d.tHigh + (Math.cos(i * 0.48) * 0.45 + 0.3) * k);
+    }
+    var values = low.concat(high),
+      vmin = Math.floor(Math.min.apply(null, values) - 1),
+      vmax = Math.ceil(Math.max.apply(null, values) + 1);
+    if (vmax <= vmin) vmax = vmin + 1;
+    var pL = 38, pR = 14, pT = 12, pB = 24;
+    var xx = function (i) { return pL + ((w - pL - pR) * i) / 11; };
+    var yy = function (v) { return pT + (h - pT - pB) * (1 - (v - vmin) / (vmax - vmin)); };
+    ctx.font = '11px DM Sans, sans-serif';
+    ctx.fillStyle = '#6f7f72';
+    for (var j = 0; j <= 3; j++) {
+      var y = pT + ((h - pT - pB) * j) / 3;
+      ctx.strokeStyle = '#e8eee7';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(pL, y);
+      ctx.lineTo(w - pR, y);
+      ctx.stroke();
+      ctx.fillText(rnd(vmax - ((vmax - vmin) * j) / 3, 0) + '°F', 0, y + 4);
+    }
+    ctx.fillText('−55 min', pL, h - 5);
+    ctx.textAlign = 'right';
+    ctx.fillText('Now (current reading)', w - pR, h - 5);
+    ctx.textAlign = 'left';
+    [[low, '#4f8d6d'], [high, '#d9785a']].forEach(function (series) {
+      ctx.beginPath();
+      series[0].forEach(function (v, i) {
+        if (i === 0) ctx.moveTo(xx(i), yy(v));
+        else ctx.lineTo(xx(i), yy(v));
+      });
+      ctx.strokeStyle = series[1];
+      ctx.lineWidth = 2.7;
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(xx(11), yy(series[0][11]), 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = series[1];
+      ctx.fill();
+    });
+  }
+
+  function tableMarkup(arr, compact) {
+    if (!arr.length)
+      return '<div class="emptyState"><b>No assessments recorded yet.</b><span>Load a scenario or press “Record decision” to add a timestamped entry.</span></div>';
+    return '<table class="logtable"><thead><tr><th scope="col">TIME (' + escapeHtml(tzLabel(new Date()) || 'LOCAL') + ')</th><th scope="col">STATUS</th><th scope="col">5 FT</th><th scope="col">30 FT</th><th scope="col">ΔT</th><th scope="col" class="reason">REASONS</th><th scope="col">EVENT · SOURCE</th></tr></thead><tbody>' +
+      arr.map(function (x) {
+        var d = x.readings || {},
+          dt = typeof d.tHigh === 'number' && typeof d.tLow === 'number' ? d.tHigh - d.tLow : NaN;
+        return '<tr><td class="when">' + escapeHtml(localStamp(x.at)) + '</td><td><span class="tag ' + pClass(x.status) + '">' + escapeHtml(x.status) +
+          '</span></td><td>' + rnd(d.tLow) + '°F · ' + rnd(d.wLow) + ' mph</td><td>' + rnd(d.tHigh) + '°F · ' + rnd(d.wHigh) + ' mph</td><td>' +
+          (Number.isFinite(dt) ? (dt > 0 ? '+' : '') + rnd(dt) + '°F' : '—') + '</td><td class="reason">' +
+          escapeHtml((x.reasons || []).join('; ') || 'No configured triggers') + '</td><td>' + escapeHtml(x.kind || 'assessment') +
+          (compact ? '' : '<br><small>' + escapeHtml(x.source || 'unknown') + '</small>') + '</td></tr>';
+      }).join('') + '</tbody></table>';
+  }
+  function updateTables() {
+    $('recentTable').innerHTML = tableMarkup(state.history.slice(0, 4), true);
+    $('fullLogTable').innerHTML = tableMarkup(state.history, false);
+    $('logCount').textContent = state.history.length + ' / ' + LOG_LIMIT + ' entries';
+    ['exportCsv', 'exportJson', 'printLog', 'clearLog'].forEach(function (id) {
+      $(id).disabled = !state.history.length;
+    });
+  }
+
+  // ---------- navigation ----------
+  var TITLES = {
+    overview: 'Spray decision overview',
+    lab: 'Interactive weather lab',
+    twin: '3D atmospheric digital twin',
+    boundary: 'Boundary & receptor lens',
+    replay: 'Weather evolution replay',
+    validation: 'Evidence & validation laboratory',
+    planner: 'Forecast window planner',
+    log: 'Decision audit log',
+    science: 'Methods & limitations',
+  };
+  var pageHooks = [];
+  function displayPage(page, opts) {
+    if (!TITLES[page] || !$(page)) page = 'overview';
+    document.querySelectorAll('.contentPage').forEach(function (x) {
+      x.classList.toggle('active', x.id === page);
+    });
+    document.querySelectorAll('[data-page]').forEach(function (x) {
+      var on = x.dataset.page === page;
+      x.classList.toggle('active', on);
+      if (on) x.setAttribute('aria-current', 'page');
+      else x.removeAttribute('aria-current');
+    });
+    $('pageTitle').textContent = TITLES[page];
+    document.title = TITLES[page] + ' · CanopyGuard';
+    closeMenu();
+    if (!opts || !opts.fromHash) {
+      if (location.hash.slice(1) !== page) {
+        try { history.pushState(null, '', '#' + page); } catch (e) { /* file:// in some browsers */ }
+      }
+    }
+    window.scrollTo(0, 0);
+    if (opts && opts.focus) $('pageTitle').focus({ preventScroll: true });
+    if (page === 'overview') setTimeout(drawTrend, 30);
+    pageHooks.forEach(function (fn) { fn(page); });
+  }
+  function currentPage() {
+    var a = document.querySelector('.contentPage.active');
+    return a ? a.id : 'overview';
+  }
+  function openMenu() {
+    $('sidebar').classList.add('open');
+    document.body.classList.add('menuOpen');
+    $('menuBtn').setAttribute('aria-expanded', 'true');
+    var first = $('sidebar').querySelector('.navbtn');
+    if (first) first.focus();
+  }
+  function closeMenu() {
+    if (!$('sidebar').classList.contains('open')) return;
+    $('sidebar').classList.remove('open');
+    document.body.classList.remove('menuOpen');
+    $('menuBtn').setAttribute('aria-expanded', 'false');
+  }
+
+  function toast(msg) {
+    var t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(function () { t.classList.remove('show'); }, 3600);
+  }
+  function download(name, content, type) {
+    var a = document.createElement('a'),
+      url = URL.createObjectURL(new Blob([content], { type: type }));
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+  }
+  function fileStamp() {
+    return new Date().toISOString().replace(/[-:]/g, '').replace(/\..+/, 'Z');
+  }
+
+  // CSV with spreadsheet formula-injection protection (OWASP): text cells starting with = + - @ tab CR are prefixed with '.
+  function csvCell(c) {
+    if (c == null) return '""';
+    if (typeof c === 'number') return Number.isFinite(c) ? String(c) : '""';
+    var s = String(c);
+    if (/^[=+\-@\t\r]/.test(s) && !/^[-+]?\d+(\.\d+)?$/.test(s)) s = "'" + s;
+    return '"' + s.replace(/"/g, '""') + '"';
+  }
+  function csv() {
+    var header = ['timestamp_utc', 'event', 'source', 'status', 'triggers', 'reasons', 't_5ft_F', 't_30ft_F', 'wind_5ft_mph', 'wind_30ft_mph',
+      'wind_5ft_from_deg', 'wind_30ft_from_deg', 'sensor_5ft_age_min', 'sensor_30ft_age_min', 'volatility', 'wind_min_mph', 'wind_max_mph', 'method', 'engine_version'];
+    var lines = [header.join(',')];
+    state.history.forEach(function (x) {
+      var d = x.readings || {};
+      lines.push([x.at, x.kind, x.source, x.status, (x.codes || []).join('|'), (x.reasons || []).join('|'), d.tLow, d.tHigh, d.wLow, d.wHigh,
+        d.dLow, d.dHigh, d.ageLow, d.ageHigh, d.volatility, d.windMin, d.windMax, d.method, x.engineVersion].map(csvCell).join(','));
+    });
+    return '﻿' + lines.join('\r\n');
+  }
+  function jsonExport() {
+    return JSON.stringify({
+      exportedAt: new Date().toISOString(),
+      app: 'CanopyGuard',
+      engineVersion: Engine.ENGINE_VERSION,
+      note: 'Browser-local weather-screening log. Not a regulatory, tamper-evident or server-synchronized record. Default and scenario readings are simulated.',
+      entries: state.history,
+    }, null, 2);
+  }
+
+  // ---------- regional forecast (optional, Open-Meteo) ----------
+  var FORECAST_TZ = 'America/Los_Angeles';
+  function forecastTime(date) {
+    try {
+      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', timeZone: FORECAST_TZ });
+    } catch (e) {
+      return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    }
+  }
+  function forecastRender() {
+    var grid = $('forecastGrid');
+    if (!grid) return;
+    var now = new Date(),
+      min = state.data.windMin,
+      max = state.data.windMax,
+      limitsOk = Number.isFinite(min) && Number.isFinite(max) && max > min;
+    var arr = state.forecasts || Array.from({ length: 12 }, function (_, i) {
+      var t = new Date(now.getTime() + (i + 1) * 3600000);
+      t.setMinutes(0, 0, 0);
+      return { date: t, wind: [5.1, 4.7, 3.8, 2.5, 3.4, 6.1, 8.3, 10.5, 9.1, 6.3, 5.3, 4.3][i], rain: [0, 0, 0, 0, 5, 7, 9, 15, 10, 6, 0, 0][i] };
+    });
+    $('forecastLimits').textContent = limitsOk
+      ? 'Screening against your configured ' + rnd(min) + '–' + rnd(max) + ' mph wind limits and ≤20% rain probability · times in Pacific Time (Fresno)'
+      : 'Wind limits in the Weather lab are invalid — no hour can be marked as a candidate.';
+    grid.innerHTML = arr.slice(0, 12).map(function (f) {
+      var windOk = Number.isFinite(f.wind),
+        rainKnown = Number.isFinite(f.rain);
+      var candidate = limitsOk && windOk && f.wind >= min && f.wind <= max && (!rainKnown || f.rain <= 20);
+      var bad = limitsOk && windOk && (f.wind < min || f.wind > max || (rainKnown && f.rain > 20));
+      var klass = candidate ? 'good' : bad ? 'bad' : 'unknown';
+      return '<div class="forecastHour ' + klass + '"><b>' + escapeHtml(forecastTime(f.date)) + ' PT</b><strong>' + rnd(f.wind) +
+        '<small> mph</small></strong><p>' + (rainKnown ? Math.round(f.rain) + '% rain chance' : 'Rain not available') + '</p><em>' +
+        (candidate ? 'CANDIDATE TO RE-CHECK' : bad ? 'OUTSIDE LIMITS' : 'UNKNOWN') + '</em></div>';
+    }).join('');
+  }
+  function timeoutSignal(ms) {
+    if (window.AbortSignal && AbortSignal.timeout) return { signal: AbortSignal.timeout(ms), cancel: function () {} };
+    var c = new AbortController(),
+      t = setTimeout(function () { c.abort(); }, ms);
+    return { signal: c.signal, cancel: function () { clearTimeout(t); } };
+  }
+  async function loadRegional() {
+    var b = $('loadForecast');
+    b.disabled = true;
+    b.textContent = 'Fetching regional forecast…';
+    $('forecastStatus').textContent = 'Contacting Open-Meteo…';
+    var to = timeoutSignal(9000);
+    try {
+      var url = 'https://api.open-meteo.com/v1/forecast?latitude=36.74&longitude=-119.79&hourly=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation_probability&timeformat=unixtime&wind_speed_unit=mph&temperature_unit=fahrenheit&timezone=America%2FLos_Angeles&forecast_days=2';
+      var res = await fetch(url, { signal: to.signal });
+      if (!res.ok) throw Error('Forecast HTTP ' + res.status);
+      var json = await res.json();
+      var hr = json && json.hourly;
+      if (!hr || !Array.isArray(hr.time) || !Array.isArray(hr.wind_speed_10m)) throw Error('Missing hourly data');
+      var arr = hr.time.map(function (t, i) {
+        var rain = hr.precipitation_probability ? hr.precipitation_probability[i] : null;
+        return { date: new Date(typeof t === 'number' ? t * 1000 : t), wind: Number(hr.wind_speed_10m[i]), rain: typeof rain === 'number' ? rain : NaN };
+      });
+      var now = Date.now();
+      var future = arr.filter(function (x) {
+        return Number.isFinite(x.wind) && Number.isFinite(x.date.getTime()) && x.date.getTime() >= now - 3600000;
+      });
+      if (!future.length) throw Error('No current hours in response');
+      state.forecasts = future.slice(0, 12);
+      state.forecastKind = 'regional';
+      $('forecastSource').textContent = 'OPEN-METEO · REGIONAL MODEL (≈10 m WIND)';
+      $('forecastSource').className = 'tag go';
+      $('forecastStatus').textContent = 'Loaded ' + localStamp(new Date().toISOString()) + '. Modeled regional values — not orchard measurements.';
+      forecastRender();
+      toast('Regional forecast loaded · on-site readings still required');
+    } catch (e) {
+      state.forecasts = null;
+      state.forecastKind = 'sample';
+      $('forecastSource').textContent = 'ILLUSTRATIVE HOURS · LIVE FORECAST UNAVAILABLE';
+      $('forecastSource').className = 'tag caution';
+      $('forecastStatus').textContent = 'Could not load the live forecast (' + (e && e.name === 'TimeoutError' || e && e.name === 'AbortError' ? 'timed out' : 'network or service error') +
+        '). The hours below are illustrative placeholders, not a forecast.';
+      forecastRender();
+      toast('Live regional forecast unavailable — showing labeled illustrative hours');
+    } finally {
+      to.cancel();
+      b.disabled = false;
+      b.textContent = '↻ Load regional forecast';
+    }
+  }
+
+  // ---------- tower JSON import ----------
+  var ALIASES = {
+    tLow: ['tLow', 'temp_5ft', 'temperature_5ft', 't_5ft_F'],
+    tHigh: ['tHigh', 'temp_30ft', 'temperature_30ft', 't_30ft_F'],
+    wLow: ['wLow', 'wind_5ft', 'wind_speed_5ft', 'wind_5ft_mph'],
+    wHigh: ['wHigh', 'wind_30ft', 'wind_speed_30ft', 'wind_30ft_mph'],
+    dLow: ['dLow', 'direction_5ft', 'wind_direction_5ft', 'wind_5ft_from_deg'],
+    dHigh: ['dHigh', 'direction_30ft', 'wind_direction_30ft', 'wind_30ft_from_deg'],
+  };
+  var AGE_ALIASES = { ageLow: ['ageLow', 'age_5ft_min', 'sensor_5ft_age_min'], ageHigh: ['ageHigh', 'age_30ft_min', 'sensor_30ft_age_min'] };
+  var TIME_ALIASES = { ageLow: ['observedAt_5ft', 'timestamp_5ft'], ageHigh: ['observedAt_30ft', 'timestamp_30ft'], both: ['observedAt', 'timestamp', 'time'] };
+  function pick(row, names) {
+    for (var i = 0; i < names.length; i++) if (Object.prototype.hasOwnProperty.call(row, names[i])) return { key: names[i], value: row[names[i]] };
+    return null;
+  }
+  // Timestamps must carry a UTC offset ("Z" or "+hh:mm"); otherwise the age is unknown.
+  function ageFromTimestamp(v, nowMs) {
+    if (typeof v !== 'string' || !/(Z|[+-]\d{2}:?\d{2})$/i.test(v.trim())) return NaN;
+    var t = Date.parse(v);
+    if (!Number.isFinite(t)) return NaN;
+    var minutes = (nowMs - t) / 60000;
+    // Small clock skew (≤2 min) is tolerated; further in the future is an impossible timestamp.
+    if (minutes < 0 && minutes >= -2) return 0;
+    return Math.round(minutes * 10) / 10;
+  }
+  // Exposed for tests: parse an imported object into readings + notes.
+  function parseTowerJson(parsed, base, nowMs) {
+    var row = Array.isArray(parsed) ? parsed[0] : parsed;
+    if (row && row.readings && typeof row.readings === 'object') row = Object.assign({}, row, row.readings);
+    if (!row || typeof row !== 'object') throw Error('No reading object found');
+    var d = Object.assign({}, base),
+      notes = [];
+    Object.keys(ALIASES).forEach(function (key) {
+      var hit = pick(row, ALIASES[key]);
+      if (!hit) throw Error('Missing ' + key);
+      var v = hit.value;
+      d[key] = typeof v === 'number' ? v : typeof v === 'string' && v.trim() !== '' ? Number(v) : NaN;
+      if (!Number.isFinite(d[key])) throw Error('Invalid ' + key);
+    });
+    ['ageLow', 'ageHigh'].forEach(function (key) {
+      var hit = pick(row, AGE_ALIASES[key]);
+      if (hit) {
+        d[key] = typeof hit.value === 'number' ? hit.value : Number(hit.value);
+        return;
+      }
+      var ts = pick(row, TIME_ALIASES[key]) || pick(row, TIME_ALIASES.both);
+      if (ts) {
+        d[key] = ageFromTimestamp(ts.value, nowMs);
+        if (!Number.isFinite(d[key])) notes.push(key + ' timestamp missing a UTC offset or unparseable');
+        return;
+      }
+      d[key] = NaN; // unknown freshness must never look fresh
+      notes.push('no timestamp or sensor age for ' + (key === 'ageLow' ? '5 ft' : '30 ft'));
+    });
+    return { readings: d, notes: notes, rows: Array.isArray(parsed) ? parsed.length : 1 };
+  }
+  function onImport(file) {
+    if (!file) return;
+    if (file.size > IMPORT_MAX_BYTES) {
+      toast('Import failed: file is larger than 1 MB');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onerror = function () { toast('Import failed: the file could not be read'); };
+    reader.onload = function () {
+      var out;
+      try {
+        out = parseTowerJson(JSON.parse(String(reader.result)), state.data, Date.now());
+      } catch (e) {
+        toast('Import failed: valid JSON with paired 5-ft and 30-ft temperature, wind speed and direction is required');
+        $('importNote').textContent = 'Last import rejected: ' + (e && e.message ? e.message : 'invalid JSON') + '. No readings were changed.';
+        return;
+      }
+      state.data = out.readings;
+      state.scenario = '';
+      state.source = 'imported';
+      syncInputs();
+      render();
+      markInvalidInputs();
+      createScenarioButtons();
+      record('import:json');
+      $('importNote').textContent = 'Imported ' + file.name + (out.rows > 1 ? ' (first of ' + out.rows + ' rows)' : '') +
+        (out.notes.length ? ' · ' + out.notes.join('; ') + ' → treated as invalid (fail-safe STOP)' : ' · sensor ages derived from file');
+      toast('Tower JSON imported and assessed · ' + assess(state.data).status);
+    };
+    reader.readAsText(file);
+  }
+  function sampleTower() {
+    var now = Date.now();
+    return {
+      _note: 'Sample CanopyGuard tower file with simulated values. Timestamps must include a UTC offset.',
+      site: 'Block A-07 (demo)',
+      observedAt_5ft: new Date(now - 60000).toISOString(),
+      observedAt_30ft: new Date(now - 60000).toISOString(),
+      temp_5ft: 73,
+      temp_30ft: 78.1,
+      wind_speed_5ft: 5,
+      wind_speed_30ft: 9.5,
+      wind_direction_5ft: 85,
+      wind_direction_30ft: 137,
+      units: { temperature: 'degF', wind_speed: 'mph', wind_direction: 'degrees true, meteorological FROM' },
+    };
+  }
+
+  function init() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(LOG_KEY) || '[]');
+      state.history = Array.isArray(saved) ? saved.map(sanitizeEntry).filter(Boolean).slice(0, LOG_LIMIT) : [];
+    } catch (e) {
+      state.history = [];
+    }
+    document.querySelectorAll('[data-page]').forEach(function (x) {
+      x.addEventListener('click', function () { displayPage(x.dataset.page, { focus: false }); });
+    });
+    document.querySelectorAll('[data-goto]').forEach(function (x) {
+      x.addEventListener('click', function () { displayPage(x.dataset.goto); });
+    });
+    $('menuBtn').addEventListener('click', function () {
+      if ($('sidebar').classList.contains('open')) closeMenu();
+      else openMenu();
+    });
+    $('navScrim').addEventListener('click', closeMenu);
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeMenu();
+    });
+    $('openLab').addEventListener('click', function () { displayPage('lab'); });
+    $('simulateShift').addEventListener('click', function () {
+      if (!Number.isFinite(state.data.tLow) || !Number.isFinite(state.data.wLow) || !Number.isFinite(state.data.dLow)) {
+        toast('Cannot simulate a shift from invalid readings — load a scenario first');
+        return;
+      }
+      state.data.tHigh = Math.round((state.data.tLow + 3.4) * 10) / 10;
+      state.data.wHigh = Math.round((state.data.wLow + 5) * 10) / 10;
+      state.data.dHigh = (state.data.dLow + 65) % 360;
+      state.data.ageLow = 1;
+      state.data.ageHigh = 1;
+      state.scenario = '';
+      state.source = 'simulated';
+      syncInputs();
+      render();
+      createScenarioButtons();
+      record('monitor:simulated_deterioration');
+      toast('SIMULATION: upper-air inversion & shear introduced');
+    });
+    $('captureTop').addEventListener('click', function () { record('manual:capture'); });
+    $('assessBtn').addEventListener('click', function () {
+      readInputs();
+      state.scenario = '';
+      state.source = 'manual';
+      render();
+      markInvalidInputs();
+      createScenarioButtons();
+      record('manual:assessment');
+    });
+    $('resetLab').addEventListener('click', function () { loadScenario(DEMOS[0]); toast('Weather lab reset to the demo anchor (simulated)'); });
+    $('uploadBtn').addEventListener('click', function () { $('jsonInput').click(); });
+    $('jsonInput').addEventListener('change', function () {
+      onImport(this.files[0]);
+      this.value = '';
+    });
+    $('sampleTowerBtn').addEventListener('click', function () {
+      download('canopyguard-sample-tower.json', JSON.stringify(sampleTower(), null, 2), 'application/json');
+    });
+    $('loadForecast').addEventListener('click', loadRegional);
+    $('exportCsv').addEventListener('click', function () {
+      download('canopyguard-decisions-' + fileStamp() + '.csv', csv(), 'text/csv;charset=utf-8');
+      toast('CSV exported · ' + state.history.length + ' entries');
+    });
+    $('exportJson').addEventListener('click', function () {
+      download('canopyguard-decisions-' + fileStamp() + '.json', jsonExport(), 'application/json');
+      toast('JSON exported · ' + state.history.length + ' entries');
+    });
+    $('printLog').addEventListener('click', function () { window.print(); });
+    $('clearLog').addEventListener('click', function () {
+      if (confirm('Permanently clear this browser-local log? Export it first if you need a copy.')) {
+        state.history = [];
+        saveLog();
+        updateTables();
+        toast('Local history cleared');
+      }
+    });
+    window.addEventListener('popstate', function () { displayPage(location.hash.slice(1) || 'overview', { fromHash: true }); });
+    window.addEventListener('hashchange', function () {
+      var p = location.hash.slice(1) || 'overview';
+      if (p !== currentPage()) displayPage(p, { fromHash: true });
+    });
+    syncInputs();
+    createScenarioButtons();
+    render();
+    if (!state.history.length) record('scenario:inversion');
+    else updateTables();
+    $('nowTime').textContent = clock();
+    setInterval(function () { $('nowTime').textContent = clock(); }, 15000);
+    var resizeT;
+    window.addEventListener('resize', function () {
+      clearTimeout(resizeT);
+      resizeT = setTimeout(function () {
+        if ($('overview').classList.contains('active')) drawTrend();
+      }, 60);
+    });
+  }
+
+  window.CanopyGuardCore = {
+    getState: function () { return state; },
+    assess: assess,
+    apply: function (input, kind, source) {
+      state.data = Object.assign({}, state.data, input);
+      state.scenario = '';
+      state.source = source || 'simulated';
+      syncInputs();
+      render();
+      createScenarioButtons();
+      if (kind) record(kind);
+    },
+    nav: displayPage,
+    currentPage: currentPage,
+    onPage: function (fn) { pageHooks.push(fn); },
+    subscribe: function (fn) { listeners.push(fn); },
+    record: record,
+    toast: toast,
+    download: download,
+    rnd: rnd,
+    _test: { csv: csv, csvCell: csvCell, parseTowerJson: parseTowerJson, sanitizeEntry: sanitizeEntry, ageFromTimestamp: ageFromTimestamp },
+  };
+  init();
+  // Deep links (#twin, #log, …) open the requested page once every module is ready.
+  window.addEventListener('DOMContentLoaded', function () {
+    var p = location.hash.slice(1);
+    if (p && TITLES[p]) displayPage(p, { fromHash: true });
+  });
+})();
+
+    </script>
+    <script>
+      window.CANOPY_BENCHMARK=[{"id":"B01","title":"Normal daytime profile","category":"clear","expected":"GO","expectedCode":null,"notes":"Wind within screening bounds; aloft is cooler.","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B02","title":"Stable non-inverted air","category":"clear","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":75.9,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B03","title":"Isothermal boundary","category":"clear","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":76,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B04","title":"Weak inversion +0.1°F","category":"inversion","expected":"STOP","expectedCode":"INVERSION","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":76.1,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B05","title":"Strong inversion +7°F","category":"inversion","expected":"STOP","expectedCode":"INVERSION","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":83,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B06","title":"Warm canopy, benign ground wind","category":"inversion","expected":"STOP","expectedCode":"INVERSION","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":80,"wLow":5.5,"wHigh":8.8,"dLow":80,"dHigh":129,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B07","title":"Ground wind 2.9 mph","category":"wind","expected":"STOP","expectedCode":"LOW_WIND","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":2.9,"wHigh":4,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B08","title":"Upper wind 2.9 mph","category":"wind","expected":"STOP","expectedCode":"LOW_WIND","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5,"wHigh":2.9,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B09","title":"Exactly minimum wind","category":"boundary","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":3,"wHigh":3,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B10","title":"Exactly maximum wind","category":"boundary","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":10,"wHigh":10,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B11","title":"Ground wind 10.1 mph","category":"wind","expected":"STOP","expectedCode":"HIGH_WIND","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":10.1,"wHigh":9.5,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B12","title":"Upper wind 10.1 mph","category":"wind","expected":"STOP","expectedCode":"HIGH_WIND","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":7,"wHigh":10.1,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B13","title":"Speed gap 3.9 mph","category":"shear","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":3,"wHigh":6.9,"dLow":80,"dHigh":80,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B14","title":"Speed gap 4.0 mph","category":"shear","expected":"CAUTION","expectedCode":"SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":3,"wHigh":7,"dLow":80,"dHigh":80,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B15","title":"Speed gap 6.0 mph","category":"shear","expected":"STOP","expectedCode":"SEVERE_SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":3,"wHigh":9,"dLow":80,"dHigh":80,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B16","title":"Direction shift 44°","category":"shear","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":124,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B17","title":"Direction shift 45°","category":"shear","expected":"CAUTION","expectedCode":"SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":125,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B18","title":"Direction shift 90°","category":"shear","expected":"STOP","expectedCode":"SEVERE_SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":170,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B19","title":"Direction wrap 359° → 1°","category":"direction","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":359,"dHigh":1,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B20","title":"Direction reversal","category":"shear","expected":"STOP","expectedCode":"SEVERE_SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":0,"dHigh":180,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B21","title":"Medium-volatility product","category":"product","expected":"CAUTION","expectedCode":"VOLATILITY","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"medium","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B22","title":"High-volatility product","category":"product","expected":"CAUTION","expectedCode":"VOLATILITY","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"high","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B23","title":"Sensor exactly 10 min old","category":"quality","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":10,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B24","title":"Upper sensor 11 min old","category":"quality","expected":"STOP","expectedCode":"STALE","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":11,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B25","title":"Lower sensor 12 min old","category":"quality","expected":"STOP","expectedCode":"STALE","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":12,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B26","title":"Negative sensor age","category":"quality","expected":"STOP","expectedCode":"INVALID","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":-1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B27","title":"Missing upper temperature","category":"quality","expected":"STOP","expectedCode":"INVALID","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":null,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B28","title":"Negative wind speed","category":"quality","expected":"STOP","expectedCode":"INVALID","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":-2,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B29","title":"Wind direction 361°","category":"quality","expected":"STOP","expectedCode":"INVALID","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":361,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B30","title":"Inverted wind range","category":"quality","expected":"STOP","expectedCode":"INVALID","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":12,"windMax":10,"method":"Airblast sprayer"}},{"id":"B31","title":"Inversion and upper limit breach","category":"combined","expected":"STOP","expectedCode":"INVERSION","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":79,"wLow":5.5,"wHigh":12,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B32","title":"Inversion with volatile product","category":"combined","expected":"STOP","expectedCode":"INVERSION","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":77,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"high","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B33","title":"Shear and volatile product","category":"combined","expected":"CAUTION","expectedCode":"SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":80,"dHigh":132,"ageLow":1,"ageHigh":1,"volatility":"high","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B34","title":"High upper wind invisible at ground","category":"hidden","expected":"STOP","expectedCode":"HIGH_WIND","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5,"wHigh":11,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B35","title":"Upper-level shear invisible at ground","category":"hidden","expected":"CAUTION","expectedCode":"SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":35,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B36","title":"Upper-level reversal invisible at ground","category":"hidden","expected":"STOP","expectedCode":"SEVERE_SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5.5,"wHigh":6,"dLow":20,"dHigh":145,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B37","title":"Lower wind violates minimum","category":"wind","expected":"STOP","expectedCode":"LOW_WIND","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":1,"wHigh":6,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B38","title":"Upper wind exactly min, ground optimal","category":"boundary","expected":"GO","expectedCode":null,"notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5,"wHigh":3,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B39","title":"Upper wind exactly max, ground optimal","category":"boundary","expected":"CAUTION","expectedCode":"SHEAR","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":74,"wLow":5,"wHigh":10,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}},{"id":"B40","title":"Both calm despite temperature lapse","category":"combined","expected":"STOP","expectedCode":"LOW_WIND","notes":"","source":"synthetic","readings":{"tLow":76,"tHigh":73,"wLow":1,"wHigh":1.5,"dLow":80,"dHigh":90,"ageLow":1,"ageHigh":1,"volatility":"low","windMin":3,"windMax":10,"method":"Airblast sprayer"}}];
+    </script>
+    <script>
+      /* CanopyGuard 2.x visual modules: Atmospheric Twin, Boundary Lens, Morning Replay, Evidence Lab.
+ * Every verdict shown here comes from core.assess (the shared engine). Visual geometry, tracers,
+ * sectors and receptor positions are illustrative and never represent measured or predicted drift. */
+(function () {
+  'use strict';
+  const core = window.CanopyGuardCore;
+  const suite = window.CANOPY_BENCHMARK || [];
+  if (!core) throw Error('CanopyGuard core is unavailable');
+  const $ = (id) => document.getElementById(id);
+
+  const SECTOR_HALF = 29; // ° half-width of each downwind screening sector (drawn and tested identically)
+  const NEAR_EDGE = 50; // ° within which a receptor is "near" a sector edge
+  const CENTER = { x: 480, y: 310 };
+  const DEFAULT_RECEPTORS = [
+    { id: 'homes', name: 'Neighboring homes', type: 'Residences', x: 242, y: 128 },
+    { id: 'habitat', name: 'Habitat buffer', type: 'Sensitive habitat', x: 570, y: 91 },
+    { id: 'canal', name: 'Irrigation canal', type: 'Waterway', x: 670, y: 520 },
+    { id: 'road', name: 'Field access road', type: 'Public access', x: 168, y: 371 },
+  ];
+  const reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const state = {
+    yaw: -0.28, zoom: 1, playing: !reducedMotion, thermal: true, tracers: true,
+    time: 0, last: 0, replayIdx: 0, replayPlaying: false, replayTimer: 0, filter: 'all',
+    receptors: DEFAULT_RECEPTORS.map((r) => Object.assign({}, r)), activeDrag: null, focusReceptor: null,
+  };
+
+  const base = () => Object.assign({}, core.getState().data);
+  const current = () => core.assess(base());
+  const isValid = (r) => !r.alerts.some((a) => a.code === 'INVALID');
+  const fmt = (n, d = 1) => (typeof n === 'number' && Number.isFinite(n) ? n.toFixed(d) : '—');
+  const safe = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const rad = (x) => (x * Math.PI) / 180;
+  const angDiff = (a, b) => { const d = (((a - b) % 360) + 360) % 360; return Math.min(d, 360 - d); };
+  const downwind = (d) => (d + 180) % 360;
+  const tone = (s) => (s === 'STOP' ? 'stop' : s === 'CAUTION' ? 'caution' : 'go');
+  // Screen vector pointing TOWARD where the wind blows (north = up), from a meteorological FROM bearing.
+  const towardVec = (fromDeg, len) => ({ x: Math.sin(rad(downwind(fromDeg))) * len, y: -Math.cos(rad(downwind(fromDeg))) * len });
+  const bearingOf = (v) => (Math.atan2(v.x - CENTER.x, CENTER.y - v.y) * 180) / Math.PI;
+
+  // Receptor alignment against the two TOWARD sectors; same rule for the map colour, list and count.
+  function alignment(v, d) {
+    const b = bearingOf(v);
+    const lo = angDiff(b, downwind(d.dLow)),
+      hi = angDiff(b, downwind(d.dHigh));
+    const inLo = lo <= SECTOR_HALF,
+      inHi = hi <= SECTOR_HALF;
+    if (inLo || inHi) return { flag: 'aligned', label: inLo && inHi ? 'IN BOTH SECTORS' : inLo ? 'IN 5-FT SECTOR' : 'IN 30-FT SECTOR', off: Math.min(lo, hi) };
+    if (Math.min(lo, hi) <= NEAR_EDGE) return { flag: 'between', label: 'NEAR SECTOR EDGE', off: Math.min(lo, hi) };
+    return { flag: 'cross', label: 'OUTSIDE SECTORS', off: Math.min(lo, hi) };
+  }
+
+  function start() {
+    const navigation = [['twin', 'Atmosphere twin', '◈'], ['boundary', 'Boundary lens', '⌁'], ['replay', 'Weather replay', '◷'], ['validation', 'Test benchmark', '✓']];
+    const nav = $('nav');
+    const before = nav.querySelector('[data-page="planner"]');
+    navigation.forEach(([page, name, glyph]) => {
+      const el = document.createElement('button');
+      el.className = 'navbtn';
+      el.type = 'button';
+      el.setAttribute('data-page', page);
+      el.innerHTML = `<span class="navGlyph" aria-hidden="true">${glyph}</span> ${name}`;
+      el.addEventListener('click', () => go(page));
+      nav.insertBefore(el, before);
+    });
+    document.querySelectorAll('[data-v2page]').forEach((el) => el.addEventListener('click', () => go(el.dataset.v2page)));
+
+    // ----- twin controls -----
+    $('resetOrbit').addEventListener('click', () => { state.yaw = -0.28; state.zoom = 1; drawTwin(); });
+    $('orbitLeft').addEventListener('click', () => { state.yaw -= 0.22; drawTwin(); });
+    $('orbitRight').addEventListener('click', () => { state.yaw += 0.22; drawTwin(); });
+    $('zoomIn').addEventListener('click', () => setZoom(state.zoom + 0.15));
+    $('zoomOut').addEventListener('click', () => setZoom(state.zoom - 0.15));
+    $('scenePlay').addEventListener('click', () => { state.playing = !state.playing; syncPlayLabel(); drawTwin(); });
+    $('toggleLayer').addEventListener('change', (e) => { state.thermal = e.target.checked; drawTwin(); });
+    $('toggleTracer').addEventListener('change', (e) => { state.tracers = e.target.checked; drawTwin(); });
+    syncPlayLabel();
+
+    const canvas = $('twinCanvas');
+    let pointer = null;
+    canvas.addEventListener('pointerdown', (e) => {
+      if (e.button !== 0) return;
+      pointer = { x: e.clientX, yaw: state.yaw };
+      canvas.setPointerCapture(e.pointerId);
+    });
+    canvas.addEventListener('pointermove', (e) => {
+      if (!pointer) return;
+      state.yaw = pointer.yaw + (e.clientX - pointer.x) * 0.008;
+      drawTwin();
+    });
+    canvas.addEventListener('pointerup', () => (pointer = null));
+    canvas.addEventListener('pointercancel', () => (pointer = null));
+    canvas.addEventListener('wheel', (e) => { e.preventDefault(); setZoom(state.zoom - e.deltaY * 0.0007); }, { passive: false });
+    canvas.addEventListener('keydown', (e) => {
+      const k = { ArrowLeft: () => (state.yaw -= 0.15), ArrowRight: () => (state.yaw += 0.15), '+': () => setZoom(state.zoom + 0.1), '=': () => setZoom(state.zoom + 0.1), '-': () => setZoom(state.zoom - 0.1) }[e.key];
+      if (k) { e.preventDefault(); k(); drawTwin(); }
+    });
+
+    // ----- boundary lens -----
+    $('boundaryReset').addEventListener('click', () => { state.receptors = DEFAULT_RECEPTORS.map((r) => Object.assign({}, r)); drawBoundary(); core.toast('Receptor layout reset'); });
+    $('boundaryRefresh').addEventListener('click', () => { syncAll(); core.toast('Boundary lens redrawn from current readings'); });
+    const map = $('boundarySVG');
+    map.addEventListener('pointerdown', (e) => {
+      const g = e.target.closest('[data-receptor]');
+      if (!g) return;
+      e.preventDefault();
+      state.activeDrag = g.getAttribute('data-receptor');
+      map.setPointerCapture(e.pointerId);
+      placeReceptor(e);
+    });
+    map.addEventListener('pointermove', (e) => { if (state.activeDrag) placeReceptor(e); });
+    // Block browser swipe/scroll gestures while a receptor is being dragged by touch.
+    map.addEventListener('touchstart', (e) => { if (e.target.closest && e.target.closest('[data-receptor]')) e.preventDefault(); }, { passive: false });
+    map.addEventListener('touchmove', (e) => { if (state.activeDrag) e.preventDefault(); }, { passive: false });
+    canvas.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+    const endDrag = () => { if (state.activeDrag) { state.activeDrag = null; renderReceptors(); } };
+    map.addEventListener('pointerup', endDrag);
+    map.addEventListener('pointercancel', endDrag);
+    map.addEventListener('keydown', (e) => {
+      const g = e.target.closest && e.target.closest('[data-receptor]');
+      if (!g) return;
+      const step = e.shiftKey ? 40 : 12;
+      const mv = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] }[e.key];
+      if (!mv) return;
+      e.preventDefault();
+      const r = state.receptors.find((x) => x.id === g.getAttribute('data-receptor'));
+      r.x = Math.max(30, Math.min(930, r.x + mv[0]));
+      r.y = Math.max(25, Math.min(585, r.y + mv[1]));
+      state.focusReceptor = r.id;
+      drawBoundary();
+    });
+
+    // ----- replay -----
+    $('replayScrub').addEventListener('input', (e) => { const v = +e.target.value; stopReplay(); state.replayIdx = v; renderReplay(); });
+    $('replayPlay').addEventListener('click', () => (state.replayPlaying ? stopReplay() : startReplay()));
+    $('replayReset').addEventListener('click', () => { stopReplay(); state.replayIdx = 0; renderReplay(); });
+    $('replayApply').addEventListener('click', () => {
+      stopReplay();
+      const f = frames[state.replayIdx];
+      core.apply(makeFrame(state.replayIdx), 'replay:frame_' + f.time, 'simulated');
+      core.toast('Synthetic frame ' + f.time + ' applied to the live dashboard and logged');
+      go('overview');
+    });
+    $('replayExport').addEventListener('click', () =>
+      core.download('canopyguard-morning-replay.json', JSON.stringify({
+        source: 'synthetic',
+        note: 'Illustrative scripted morning event; not a measured or predictive series. Times are date-free local clock labels.',
+        engineVersion: window.CanopyGuardEngine.ENGINE_VERSION,
+        frames: frames.map((f, i) => ({ time: f.time, readings: makeFrame(i), result: core.assess(makeFrame(i)).status, codes: core.assess(makeFrame(i)).alerts.map((a) => a.code) })),
+      }, null, 2), 'application/json'));
+
+    // ----- evidence lab -----
+    buildFilter();
+    $('benchmarkRun').addEventListener('click', () => { runBenchmark(); core.toast('All ' + suite.length + ' synthetic cases re-run against the live engine'); });
+    $('exportBenchmark').addEventListener('click', () =>
+      core.download('canopyguard-40-labeled-cases.json', JSON.stringify({ schemaVersion: '1.0', source: 'synthetic', engineVersion: window.CanopyGuardEngine.ENGINE_VERSION, results: lastRun, cases: suite }, null, 2), 'application/json'));
+    $('validationFilter').addEventListener('change', (e) => { state.filter = e.target.value; runBenchmark(); });
+    $('benchmarkTable').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-case]');
+      if (!btn) return;
+      const row = suite.find((x) => x.id === btn.dataset.case);
+      if (!row) return;
+      core.apply(row.readings, 'benchmark:' + row.id, 'simulated');
+      core.toast('Synthetic case ' + row.id + ' loaded · ' + core.assess(base()).status);
+      go('overview');
+    });
+    $('loadGroundBlindspot').addEventListener('click', () => {
+      const r = suite.find((x) => x.id === 'B06') || suite.find((x) => x.category === 'hidden');
+      if (!r) return;
+      core.apply(r.readings, 'benchmark:' + r.id, 'simulated');
+      go('twin');
+    });
+    $('benchmarkLive').addEventListener('click', () => go('lab'));
+
+    core.subscribe(() => syncAll());
+    core.onPage((page) => {
+      if (page !== 'replay') stopReplay();
+      if (page === 'twin') requestAnimationFrame(drawTwin);
+      if (page === 'boundary') requestAnimationFrame(drawBoundary);
+    });
+    let rt;
+    window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { drawTwin(); drawBoundary(); }, 60); });
+    document.addEventListener('visibilitychange', () => { state.last = 0; if (document.hidden) stopReplay(); });
+
+    runBenchmark();
+    renderReplay();
+    syncAll();
+    requestAnimationFrame(tick);
+  }
+
+  function setZoom(z) { state.zoom = Math.max(0.6, Math.min(1.7, z)); drawTwin(); }
+  function syncPlayLabel() {
+    $('scenePlay').textContent = state.playing ? 'Ⅱ Pause motion' : '▶ Resume motion';
+    $('scenePlay').setAttribute('aria-pressed', String(!state.playing));
+  }
+  function go(page) { core.nav(page); }
+
+  function syncAll() {
+    const d = base(), r = current(), valid = isValid(r);
+    ['twinState', 'boundaryState'].forEach((id) => { $(id).textContent = r.status; $(id).className = 'v2-pill ' + tone(r.status); });
+    $('twinVerdict').textContent = r.alerts[0]?.title || 'No configured weather triggers';
+    $('twinExplanation').textContent = r.alerts[0]?.msg || 'Both heights are within the configured limits. This does not authorize application.';
+    $('twinReasons').innerHTML = r.alerts.length
+      ? r.alerts.map((a) => `<li class="${a.level === 'STOP' ? 'stop' : 'caution'}"><b>${safe(a.level)}</b> ${safe(a.title)}</li>`).join('')
+      : '<li class="go"><b>GO</b> No configured weather triggers (weather screening only)</li>';
+    $('twinTempHigh').textContent = fmt(d.tHigh) + '°F';
+    $('twinTempLow').textContent = fmt(d.tLow) + '°F';
+    $('twinWindHigh').textContent = fmt(d.wHigh) + ' mph · from ' + fmt(d.dHigh, 0) + '°';
+    $('twinWindLow').textContent = fmt(d.wLow) + ' mph · from ' + fmt(d.dLow, 0) + '°';
+    $('twinDelta').textContent = valid ? (r.delta > 0 ? '+' : '') + fmt(r.delta) + '°F' : '—';
+    $('twinGap').textContent = valid ? fmt(r.windGap) + ' mph' : '—';
+    $('twinTurn').textContent = valid ? fmt(r.turn, 0) + '°' : '—';
+    $('twinGround').textContent = r.ground;
+    $('twinPaired').textContent = r.status;
+    $('twinPaired').className = 'v2-readoutSmall ' + tone(r.status);
+    $('twinBlindSpot').textContent = !valid
+      ? 'Readings are invalid — neither screen can be trusted until corrected.'
+      : r.ground === 'LOOKS OK' && r.status !== 'GO'
+        ? 'Ground-only station misses ' + r.alerts.length + ' risk signal' + (r.alerts.length === 1 ? '' : 's') + ' that the paired tower flags.'
+        : r.ground === 'LOOKS OK'
+          ? 'Both screens pass their wind checks. GO is weather screening only, not authorization.'
+          : 'The ground-only wind check also fails here; the paired tower adds upper-air detail.';
+    const src = core.getState().source;
+    const srcLabel = src === 'imported' ? 'IMPORTED FILE' : src === 'manual' ? 'MANUAL ENTRY' : 'SIMULATED';
+    $('twinInputQuality').textContent = !valid ? 'INVALID INPUT' : r.alerts.some((x) => x.code === 'STALE') ? 'STALE · RECHECK' : srcLabel + ' · ' + fmt(Math.max(d.ageLow, d.ageHigh), 0) + ' min old';
+    $('boundaryDetails').textContent = !valid
+      ? 'Readings are invalid, so no directional sectors are drawn.'
+      : r.delta > 0
+        ? 'Inversion measured: actual transport and dispersion are highly uncertain. Sectors show direction only.'
+        : 'No inversion in these readings; wind direction is still only a directional screening clue, not a transport forecast.';
+    $('boundaryWind').textContent = 'FROM ' + fmt(d.dLow, 0) + '° (5 ft) / ' + fmt(d.dHigh, 0) + '° (30 ft)';
+    drawTwin();
+    drawBoundary();
+  }
+
+  // ---------- Atmospheric twin (illustrative perspective projection) ----------
+  function resize(c) {
+    const box = c.getBoundingClientRect();
+    if (box.width === 0 || box.height === 0) return null;
+    const dpr = Math.min(2, window.devicePixelRatio || 1), w = box.width, h = box.height;
+    if (c.width !== Math.round(w * dpr) || c.height !== Math.round(h * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+    const ctx = c.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w, h };
+  }
+  function rand(k) { const a = Math.sin(k * 127.1 + 31.7) * 43758.5453; return a - Math.floor(a); }
+  function project(x, y, z, w, h) {
+    const cy = Math.cos(state.yaw), sy = Math.sin(state.yaw);
+    const rx = x * cy - z * sy, rz = x * sy + z * cy;
+    const perspective = 660 / (660 + rz * 0.45);
+    const s = Math.min(w / 730, h / 480) * state.zoom * perspective;
+    return { x: w * 0.5 + rx * s, y: h * 0.65 + (rz * 0.61 - y * 1.32) * s, s, depth: rz };
+  }
+  const trees = [];
+  for (let row = 0; row < 6; row++) for (let col = 0; col < 9; col++) trees.push({ x: -275 + col * 68, z: -145 + row * 57, r: 14 + rand(row * 9 + col) * 4, light: rand(200 + row * 9 + col) });
+  const sparks = Array.from({ length: 215 }, (_, i) => ({ seed: i, spread: (rand(i + 71) - 0.5) * 185, age: rand(i + 17), y: rand(i + 89) }));
+
+  function tick(t) {
+    const sec = state.last ? Math.min(0.06, (t - state.last) / 1000) : 0;
+    state.last = t;
+    const visible = $('twin').classList.contains('active') && !document.hidden;
+    if (state.playing && visible) { state.time += sec; drawTwin(); }
+    requestAnimationFrame(tick);
+  }
+  function drawTwin() {
+    const can = $('twinCanvas');
+    if (!$('twin').classList.contains('active')) return;
+    const size = resize(can);
+    if (!size) return;
+    const { ctx: c, w, h } = size, d = base(), r = current(), valid = isValid(r), inv = valid && r.delta > 0;
+    const sky = c.createLinearGradient(0, 0, 0, h);
+    sky.addColorStop(0, '#0d2425'); sky.addColorStop(0.65, '#1b3b34'); sky.addColorStop(1, '#425443');
+    c.fillStyle = sky;
+    c.fillRect(0, 0, w, h);
+    // Thermal band: an explanatory highlight of the measured sign of ΔT, not a modeled layer.
+    if (state.thermal && valid) {
+      const grd = c.createLinearGradient(0, h * 0.12, 0, h * 0.82);
+      grd.addColorStop(0, inv ? '#c7835b11' : '#7eb8a90a');
+      grd.addColorStop(0.4, inv ? '#e5b47d3b' : '#9dd6b913');
+      grd.addColorStop(1, inv ? '#f3ae6e12' : '#83bc9b03');
+      c.fillStyle = grd;
+      c.fillRect(0, h * 0.14, w, h * 0.73);
+    }
+    const poly = (points, color, stroke) => {
+      c.beginPath();
+      points.forEach((p, i) => { const q = project(p[0], p[1], p[2], w, h); i ? c.lineTo(q.x, q.y) : c.moveTo(q.x, q.y); });
+      c.closePath(); c.fillStyle = color; c.fill();
+      if (stroke) { c.strokeStyle = stroke; c.lineWidth = 1; c.stroke(); }
+    };
+    poly([[-335, 0, -190], [335, 0, -190], [335, 0, 185], [-335, 0, 185]], '#2f4d36', '#57715a');
+    for (let row = 0; row < 6; row++) { const z = -145 + row * 57; poly([[-318, 0.2, z - 13], [318, 0.2, z - 13], [318, 0.2, z + 13], [-318, 0.2, z + 13]], row % 2 ? '#365d40' : '#395b3b'); }
+    // Compass: north is -z (matches the Boundary Lens, where north is up).
+    const n0 = project(-300, 0.5, -120, w, h), n1 = project(-300, 0.5, -178, w, h);
+    c.strokeStyle = '#e9f5d0'; c.lineWidth = 2; c.beginPath(); c.moveTo(n0.x, n0.y); c.lineTo(n1.x, n1.y); c.stroke();
+    c.fillStyle = '#e9f5d0'; c.font = '800 12px DM Sans, sans-serif'; c.textAlign = 'center'; c.fillText('N', n1.x, n1.y - 6);
+    const sorted = trees.slice().sort((a, b) => project(a.x, 0, a.z, w, h).depth - project(b.x, 0, b.z, w, h).depth);
+    for (const t of sorted) {
+      const bp = project(t.x, 0, t.z, w, h), mid = project(t.x, 34, t.z, w, h), cp = project(t.x, 49, t.z, w, h), sc = bp.s;
+      c.fillStyle = '#091e1669'; c.beginPath(); c.ellipse(bp.x + 7 * sc, bp.y + 4 * sc, 24 * sc, 9 * sc, -0.3, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#b0a27a'; c.lineWidth = Math.max(1.3, 7 * sc); c.lineCap = 'round'; c.beginPath(); c.moveTo(bp.x, bp.y); c.lineTo(mid.x, mid.y); c.stroke();
+      const radius = t.r * sc;
+      const cg = c.createRadialGradient(cp.x - radius * 0.4, cp.y - radius * 0.4, 0, cp.x, cp.y, radius * 1.5);
+      cg.addColorStop(0, t.light > 0.5 ? '#80a86c' : '#68965f'); cg.addColorStop(0.65, t.light > 0.5 ? '#477b55' : '#3f7650'); cg.addColorStop(1, '#224f38');
+      c.fillStyle = cg; c.beginPath(); c.ellipse(cp.x, cp.y, radius * 1.45, radius * 0.93, 0, 0, Math.PI * 2); c.fill();
+      c.fillStyle = '#8bbf8033'; c.beginPath(); c.ellipse(cp.x - radius * 0.25, cp.y - radius * 0.24, radius * 0.84, radius * 0.42, -0.2, 0, Math.PI * 2); c.fill();
+    }
+    // Tower (heights exaggerated for legibility).
+    const pole1 = project(-4, 0, 2, w, h), pole2 = project(-4, 115, 2, w, h);
+    c.strokeStyle = '#e2e9c1'; c.lineWidth = 3.8; c.beginPath(); c.moveTo(pole1.x, pole1.y); c.lineTo(pole2.x, pole2.y); c.stroke();
+    const sensor = (alt, color, label, reading) => {
+      const p = project(-4, alt, 2, w, h);
+      c.fillStyle = color; c.beginPath(); c.arc(p.x, p.y, 6.6, 0, Math.PI * 2); c.fill();
+      c.strokeStyle = '#0c2a1b'; c.lineWidth = 2; c.stroke();
+      c.font = '700 11px DM Sans, sans-serif'; c.textAlign = 'left';
+      const text = label + ' · ' + reading, tw = c.measureText(text).width;
+      c.fillStyle = '#0d2219c4'; c.fillRect(p.x + 14, p.y - 9, tw + 12, 18);
+      c.fillStyle = '#edffe7'; c.fillText(text, p.x + 20, p.y + 4);
+    };
+    // Arrows point TOWARD (downwind) from each measured FROM bearing.
+    function arrowAt(y, speed, fromDeg, color) {
+      if (!Number.isFinite(speed) || !Number.isFinite(fromDeg)) return;
+      const len = Math.max(45, Math.min(115, speed * 13));
+      const dx = Math.sin(rad(downwind(fromDeg))) * len, dz = -Math.cos(rad(downwind(fromDeg))) * len;
+      const p = project(-4, y, 2, w, h), q = project(-4 + dx, y, 2 + dz, w, h);
+      c.strokeStyle = color; c.lineWidth = 3; c.beginPath(); c.moveTo(p.x, p.y); c.lineTo(q.x, q.y); c.stroke();
+      const a = Math.atan2(q.y - p.y, q.x - p.x);
+      c.fillStyle = color; c.beginPath(); c.moveTo(q.x, q.y);
+      c.lineTo(q.x - Math.cos(a - 0.48) * 13, q.y - Math.sin(a - 0.48) * 13);
+      c.lineTo(q.x - Math.cos(a + 0.48) * 13, q.y - Math.sin(a + 0.48) * 13); c.fill();
+    }
+    if (valid) { arrowAt(88, d.wHigh, d.dHigh, '#ffc49a'); arrowAt(16, d.wLow, d.dLow, '#c8f392'); }
+    if (state.tracers && valid) {
+      const turnSigned = ((((d.dHigh - d.dLow) % 360) + 540) % 360) - 180; // shortest signed rotation
+      for (const s of sparks) {
+        const pAge = (s.age + state.time * (0.1 + Math.max(0, Math.min(15, d.wLow)) * 0.008)) % 1;
+        const adv = pAge * 260;
+        const bearing = rad(downwind(d.dLow + turnSigned * Math.min(1, s.y * 0.42)));
+        const x = adv * Math.sin(bearing) + s.spread * 0.4;
+        const z = adv * -Math.cos(bearing) + (rand(s.seed + 228) - 0.5) * 120 * (inv ? 0.47 : 1.12);
+        const y = inv ? 8 + s.y * 18 : 8 + s.y * 23 + pAge * 88;
+        const p = project(x - 15, y, z, w, h);
+        if (p.x < 0 || p.x > w || p.y < 0 || p.y > h) continue;
+        const alpha = (1 - pAge) * (0.25 + 0.7 * s.y);
+        c.fillStyle = (inv ? 'rgba(252,191,129,' : 'rgba(212,253,189,') + alpha.toFixed(3) + ')';
+        c.beginPath(); c.arc(p.x, p.y, Math.max(0.65, 1.7 * p.s), 0, Math.PI * 2); c.fill();
+      }
+    }
+    sensor(88, '#ffb28c', '30 FT', fmt(d.tHigh) + '°F');
+    sensor(16, '#c9ec9c', '5 FT', fmt(d.tLow) + '°F');
+    if (!valid) {
+      c.fillStyle = '#0d2219e0'; c.fillRect(w / 2 - 170, h / 2 - 34, 340, 58);
+      c.fillStyle = '#ffb9a8'; c.font = '800 14px DM Sans, sans-serif'; c.textAlign = 'center';
+      c.fillText('INVALID OR MISSING READINGS', w / 2, h / 2 - 8);
+      c.fillStyle = '#d8e8d6'; c.font = '600 11px DM Sans, sans-serif';
+      c.fillText('Wind vectors and tracers are hidden until corrected.', w / 2, h / 2 + 12);
+    }
+    c.textAlign = 'left';
+  }
+
+  // ---------- Boundary lens (schematic) ----------
+  function markScale() {
+    const rect = $('boundarySVG').getBoundingClientRect();
+    return rect.width ? Math.max(1, Math.min(2.1, 560 / rect.width)) : 1;
+  }
+  function renderReceptors() {
+    const d = base(), r = current();
+    if (!isValid(r)) {
+      $('receptorList').innerHTML = state.receptors.map((v) => `<div class="v2-receptor"><div><strong>${safe(v.name)}</strong><small>${safe(v.type)}</small></div><em class="between">UNKNOWN</em></div>`).join('');
+      $('boundaryAlignment').textContent = 'Unavailable (invalid readings)';
+      return;
+    }
+    $('receptorList').innerHTML = state.receptors.map((v) => {
+      const a = alignment(v, d);
+      return `<div class="v2-receptor"><div><strong>${safe(v.name)}</strong><small>${safe(v.type)} · bearing ${Math.round((bearingOf(v) + 360) % 360)}° from block · ${Math.round(a.off)}° from nearest sector axis</small></div><em class="${a.flag}">${a.label}</em></div>`;
+    }).join('');
+    const n = state.receptors.filter((v) => alignment(v, d).flag === 'aligned').length;
+    $('boundaryAlignment').textContent = n + ' of ' + state.receptors.length + ' receptors';
+  }
+  function sectorPath(cx, cy, fromDeg, r) {
+    const pts = [`${cx},${cy}`];
+    for (let a = fromDeg - SECTOR_HALF; a <= fromDeg + SECTOR_HALF + 0.001; a += 2) { const v = towardVec(a, r); pts.push(`${(cx + v.x).toFixed(1)},${(cy + v.y).toFixed(1)}`); }
+    return 'M' + pts[0] + ' L' + pts.slice(1).join(' L') + ' Z';
+  }
+  function drawBoundary() {
+    if (!$('boundary').classList.contains('active')) return;
+    const d = base(), r = current(), valid = isValid(r), inv = valid && r.delta > 0, k = markScale();
+    const svg = $('boundarySVG');
+    let body = '<defs><linearGradient id="fieldBg" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#1c3c32"/><stop offset="1" stop-color="#122b22"/></linearGradient><radialGradient id="screenHot"><stop stop-color="#ed9756" stop-opacity=".57"/><stop offset="1" stop-color="#ed9756" stop-opacity="0"/></radialGradient></defs>';
+    body += '<rect width="960" height="630" fill="url(#fieldBg)"/>';
+    for (let i = 0; i < 17; i++) body += `<line x1="${i * 60}" y1="0" x2="${i * 60}" y2="630" stroke="#9fc4a7" stroke-opacity=".07"/>`;
+    for (let i = 0; i < 11; i++) body += `<line x1="0" y1="${i * 63}" x2="960" y2="${i * 63}" stroke="#9fc4a7" stroke-opacity=".07"/>`;
+    body += '<rect x="366" y="185" width="228" height="250" rx="16" fill="#3d6041" stroke="#bbda9b" stroke-width="2.5"/>';
+    for (let row = 0; row < 6; row++) for (let col = 0; col < 5; col++) { const x = 394 + col * 42, y = 215 + row * 39; body += `<circle cx="${x}" cy="${y}" r="13" fill="${row % 2 ? '#729865' : '#5f895b'}" stroke="#87ae76"/><circle cx="${x - 3}" cy="${y - 3}" r="5" fill="#94b982" opacity=".6"/>`; }
+    if (valid) {
+      // Directional TOWARD sectors only — no predicted transport, distance or concentration.
+      body += `<path d="${sectorPath(CENTER.x, CENTER.y, d.dLow, 540)}" fill="#b5ed8b" fill-opacity=".11" stroke="#b7e998" stroke-dasharray="6 8" stroke-opacity=".8" stroke-width="2"/>`;
+      body += `<path d="${sectorPath(CENTER.x, CENTER.y, d.dHigh, 580)}" fill="#f6b277" fill-opacity=".13" stroke="#ffbf99" stroke-dasharray="8 7" stroke-opacity=".7" stroke-width="2"/>`;
+      if (inv) { const v = towardVec(d.dLow, 120); body += `<ellipse cx="${CENTER.x + v.x}" cy="${CENTER.y + v.y}" rx="180" ry="125" fill="url(#screenHot)" opacity=".5"/>`; }
+    }
+    body += '<rect x="438" y="295" width="84" height="29" rx="8" fill="#203a2c" stroke="#c0e5a0"/><text x="480" y="314" font-size="11" font-weight="900" text-anchor="middle" fill="#d8fbc2">BLOCK A-07</text>';
+    if (valid) {
+      const point = (deg, col, text, dy) => { const p = towardVec(deg, 110); return `<line x1="480" y1="310" x2="${CENTER.x + p.x}" y2="${CENTER.y + p.y}" stroke="${col}" stroke-width="5"/><circle cx="${CENTER.x + p.x}" cy="${CENTER.y + p.y}" r="7" fill="${col}"/><text x="${CENTER.x + p.x + 13}" y="${CENTER.y + p.y + 3 + dy}" fill="${col}" font-size="${13 * k}" font-weight="800">${text}</text>`; };
+      body += point(d.dLow, '#c4f59b', '5 FT →', -9) + point(d.dHigh, '#ffc19c', '30 FT →', 10);
+    } else {
+      body += `<text x="480" y="470" text-anchor="middle" font-size="${18 * k}" font-weight="900" fill="#ffb9a8">INVALID READINGS · NO SECTORS</text>`;
+    }
+    body += `<g transform="translate(906 22)"><path d="M0 0 L7 18 L0 14 L-7 18 Z" fill="#c9e7ce"/><text y="${34 + 4 * k}" font-size="${14 * k}" fill="#c9e7ce" font-weight="900" text-anchor="middle">N</text></g>`;
+    const icons = { homes: '⌂', habitat: '♧', canal: '≈', road: '⬡' };
+    for (const v of state.receptors) {
+      const a = valid ? alignment(v, d) : { flag: 'unknown', label: 'UNKNOWN' };
+      const hot = a.flag === 'aligned';
+      body += `<g class="map-receptor" data-receptor="${v.id}" tabindex="0" role="button" aria-label="${safe(v.name)}: ${safe(a.label)}. Drag, or use arrow keys to move."><circle cx="${v.x}" cy="${v.y}" r="${23 * k}" fill="${hot ? '#ad654b' : '#284b3f'}" stroke="${hot ? '#fbc5ab' : '#b3d5b1'}" stroke-width="2.5"/><text x="${v.x}" y="${v.y + 8 * k}" text-anchor="middle" fill="#f7fdf3" font-size="${23 * k}" font-weight="700" aria-hidden="true">${icons[v.id]}</text><text x="${v.x}" y="${v.y + 23 * k + 16 * k}" text-anchor="middle" fill="#e8f4e7" font-size="${11 * k}" font-weight="800" aria-hidden="true">${safe(v.name)}</text></g>`;
+    }
+    svg.innerHTML = body;
+    if (state.focusReceptor) { const el = svg.querySelector(`[data-receptor="${state.focusReceptor}"]`); if (el) el.focus(); state.focusReceptor = null; }
+    renderReceptors();
+    $('boundaryGround').textContent = r.ground;
+    $('boundaryPaired').textContent = r.status;
+    $('boundaryPaired').className = 'v2-readoutSmall ' + tone(r.status);
+  }
+  function placeReceptor(e) {
+    const svg = $('boundarySVG'), ctm = svg.getScreenCTM();
+    const r = state.receptors.find((x) => x.id === state.activeDrag);
+    if (!r || !ctm) return;
+    const pt = new DOMPoint(e.clientX, e.clientY).matrixTransform(ctm.inverse());
+    r.x = Math.max(30, Math.min(930, pt.x));
+    r.y = Math.max(25, Math.min(585, pt.y));
+    drawBoundary();
+  }
+
+  // ---------- Morning replay: 17 synthetic frames, 05:30–09:30 ----------
+  const r1 = (v) => Math.round(v * 10) / 10;
+  const frames = Array.from({ length: 17 }, (_, i) => {
+    const minutes = 5 * 60 + 30 + i * 15, t = i / 16;
+    return {
+      time: `${String(Math.floor(minutes / 60)).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`,
+      tLow: r1(61 + 27 * t), tHigh: r1(67 + 12 * t + Math.sin(t * 3) * 0.3),
+      wLow: r1(4.6 + 1.3 * t), wHigh: r1(7.6 - 1.1 * t), dLow: Math.round(85 + 7 * t), dHigh: Math.round(139 - 38 * t),
+    };
+  });
+  function makeFrame(i) {
+    const d = Object.assign({}, base(), frames[i]);
+    delete d.time;
+    d.ageLow = 1; d.ageHigh = 1; d.volatility = 'low';
+    if (!(Number.isFinite(d.windMin) && Number.isFinite(d.windMax) && d.windMax > d.windMin)) { d.windMin = 3; d.windMax = 10; }
+    return d;
+  }
+  function startReplay() {
+    if (state.replayIdx >= frames.length - 1) state.replayIdx = 0;
+    state.replayPlaying = true;
+    renderReplay();
+    clearInterval(state.replayTimer);
+    state.replayTimer = setInterval(() => {
+      if (state.replayIdx >= frames.length - 1) { stopReplay(); return; }
+      state.replayIdx++;
+      renderReplay();
+    }, reducedMotion ? 1800 : 1100);
+  }
+  function stopReplay() {
+    clearInterval(state.replayTimer);
+    if (state.replayPlaying) { state.replayPlaying = false; renderReplay(); }
+  }
+  function renderReplay() {
+    const i = state.replayIdx, f = frames[i], r = core.assess(makeFrame(i));
+    $('replayScrub').value = i;
+    $('replayScrub').setAttribute('aria-valuetext', f.time + ', ' + r.status);
+    $('replayClock').textContent = f.time;
+    $('replayTemp').textContent = (r.delta > 0 ? '+' : '') + fmt(r.delta) + '°F';
+    $('replayWind').textContent = fmt(f.wLow) + ' / ' + fmt(f.wHigh) + ' mph';
+    $('replayStatus').textContent = r.status;
+    $('replayStatus').className = 'v2-readout ' + tone(r.status);
+    $('replayReason').textContent = r.alerts.length ? r.alerts.map((x) => x.title).join(' · ') : 'Two-height screening passes; verify actual field conditions and label.';
+    $('replayCount').textContent = i + 1 + ' / ' + frames.length;
+    $('replayPlay').textContent = state.replayPlaying ? 'Ⅱ Pause sequence' : i >= frames.length - 1 ? '↻ Play again' : '▶ Play sequence';
+    $('replayPlay').setAttribute('aria-pressed', String(state.replayPlaying));
+    $('replayTimeline').innerHTML = frames.map((v, j) => {
+      const s = core.assess(makeFrame(j)).status;
+      return `<button type="button" aria-label="Frame ${j + 1}, ${v.time}, ${s}" data-frame="${j}" class="${tone(s)} ${j === i ? 'selected' : ''}"></button>`;
+    }).join('');
+    $('replayTimeline').querySelectorAll('button').forEach((btn) => btn.addEventListener('click', () => { stopReplay(); state.replayIdx = +btn.dataset.frame; renderReplay(); }));
+    $('replayGround').textContent = r.ground;
+    $('replayPaired').textContent = r.status;
+    $('replayPaired').className = 'v2-tagText ' + tone(r.status);
+  }
+
+  // ---------- Evidence lab ----------
+  let lastRun = [];
+  function buildFilter() {
+    const counts = {};
+    suite.forEach((x) => (counts[x.category] = (counts[x.category] || 0) + 1));
+    const label = { clear: 'Clear conditions', inversion: 'Inversions', wind: 'Wind limits', shear: 'Wind shear', direction: 'Direction wrap-around', quality: 'Sensor quality', boundary: 'Threshold boundaries', combined: 'Combined hazards', product: 'Product volatility', hidden: 'Hidden-hazard set' };
+    const opts = [['all', 'All cases (' + suite.length + ')'], ['ground-blind', 'Ground-blind conditions (computed)']]
+      .concat(Object.keys(counts).sort().map((c) => [c, (label[c] || c) + ' (' + counts[c] + ')']))
+      .concat([['failed', 'Failures only']]);
+    $('validationFilter').innerHTML = opts.map(([v, t]) => `<option value="${safe(v)}">${safe(t)}</option>`).join('');
+  }
+  function runBenchmark() {
+    const data = suite.map((row) => {
+      const out = core.assess(row.readings), codes = out.alerts.map((x) => x.code);
+      const pass = out.status === row.expected && (!row.expectedCode || codes.includes(row.expectedCode));
+      return Object.assign({}, row, { actual: out.status, codes, ground: out.ground, pass });
+    });
+    lastRun = data.map((x) => ({ id: x.id, expected: x.expected, actual: x.actual, codes: x.codes, pass: x.pass }));
+    const good = data.filter((x) => x.pass).length,
+      hidden = data.filter((x) => x.ground === 'LOOKS OK' && x.actual !== 'GO').length,
+      stops = data.filter((x) => x.actual === 'STOP').length;
+    $('benchPassed').textContent = `${good}/${data.length}`;
+    $('benchMissed').textContent = hidden;
+    $('benchStops').textContent = stops;
+    $('benchStatus').textContent = good === data.length ? 'ALL ' + data.length + ' RULE CHECKS PASS' : 'INVESTIGATE RULE FAILURE';
+    $('benchStatus').className = 'v2-pill ' + (good === data.length ? 'go' : 'stop');
+    const f = state.filter;
+    const filtered = f === 'all' ? data : data.filter((x) => (f === 'ground-blind' ? x.ground === 'LOOKS OK' && x.actual !== 'GO' : f === 'failed' ? !x.pass : x.category === f));
+    $('benchmarkCount').textContent = 'Showing ' + filtered.length + ' of ' + data.length + ' synthetic cases';
+    $('benchmarkTable').innerHTML = filtered.length
+      ? filtered.map((x) => `<tr><td>${safe(x.id)}</td><td>${safe(x.title)}</td><td>${safe(x.category)}</td><td>${safe(x.expected)}</td><td><span class="v2-tagText ${tone(x.actual)}">${safe(x.actual)}</span><small class="codes">${safe(x.codes.join(' · ') || '—')}</small></td><td>${safe(x.ground)}</td><td><span class="v2-tableStatus ${x.pass ? 'pass' : 'fail'}">${x.pass ? 'PASS' : 'FAIL'}</span></td><td><button type="button" class="v2-ctrl" data-case="${safe(x.id)}" aria-label="Load case ${safe(x.id)} into the live dashboard">Load</button></td></tr>`).join('')
+      : `<tr><td colspan="8" class="v2-empty">${f === 'failed' ? 'No failing cases — every synthetic rule check passes.' : 'No cases in this group.'}</td></tr>`;
+  }
+
+  start();
+})();
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,117 @@
+{
+  "offset": 2.422,
+  "duration": 170.307,
+  "cues": [
+    {
+      "start": 0,
+      "label": "CANOPYGUARD · SPRAY OR WAIT?",
+      "text": "A single 5-ft weather station can say “looks OK” while the air above the orchard says stop.",
+      "end": 5.251
+    },
+    {
+      "start": 5.251,
+      "label": "THE BLIND SPOT · SIMULATED SCENARIO",
+      "text": "Hidden-inversion scenario: 5-ft wind 5.0 mph sits inside the 3–10 mph range → the ground-only check reads LOOKS OK.",
+      "end": 14.315
+    },
+    {
+      "start": 14.315,
+      "label": "THE BLIND SPOT · SIMULATED SCENARIO",
+      "text": "The paired 5 ft + 30 ft tower sees 78.1 °F aloft vs 73.0 °F near the ground — an inversion → STOP.",
+      "end": 21.404
+    },
+    {
+      "start": 21.404,
+      "label": "DATA & REASONS FIRST",
+      "text": "ΔT +5.1 °F (30 ft − 5 ft), 4.5 mph speed shear, 52° direction shift. Every STOP lists its reasons.",
+      "end": 32.82
+    },
+    {
+      "start": 32.82,
+      "label": "ATMOSPHERIC TWIN · ILLUSTRATIVE",
+      "text": "Live-linked to the same readings: warm layer aloft, 5-ft and 30-ft wind arrows pointing downwind (readings are FROM).",
+      "end": 41.38
+    },
+    {
+      "start": 41.38,
+      "label": "ATMOSPHERIC TWIN · ILLUSTRATIVE",
+      "text": "Drag to orbit, zoom, pause. Tracers explain stratification only — they are not spray, drift or concentration.",
+      "end": 57.886
+    },
+    {
+      "start": 57.886,
+      "label": "BOUNDARY LENS · SCREENING ONLY",
+      "text": "Sectors show where each height’s wind blows TOWARD (±29°). Neighboring homes sit in the 30-ft sector.",
+      "end": 65.63
+    },
+    {
+      "start": 65.63,
+      "label": "BOUNDARY LENS · SCREENING ONLY",
+      "text": "Drag a receptor upwind and its alignment updates instantly — the list and count use the same rule as the map.",
+      "end": 76.001
+    },
+    {
+      "start": 76.001,
+      "label": "BOUNDARY LENS · SCREENING ONLY",
+      "text": "Schematic only: not a map, plume, distance, exposure or regulatory buffer prediction.",
+      "end": 87.684
+    },
+    {
+      "start": 87.684,
+      "label": "MORNING REPLAY · 17 SYNTHETIC FRAMES",
+      "text": "A scripted 05:30–09:30 morning. Each frame runs through the same engine as the live dashboard.",
+      "end": 96.878
+    },
+    {
+      "start": 96.878,
+      "label": "MORNING REPLAY · 17 SYNTHETIC FRAMES",
+      "text": "Watch the verdict change as the inversion erodes — STOP turns to GO when 30 ft is no longer warmer.",
+      "end": 106.226
+    },
+    {
+      "start": 106.226,
+      "label": "MORNING REPLAY · 17 SYNTHETIC FRAMES",
+      "text": "Pick a frame and apply it to the live dashboard; it is logged with a timestamp. Synthetic — not a forecast.",
+      "end": 117.751
+    },
+    {
+      "start": 117.751,
+      "label": "EVIDENCE LAB · 40 SYNTHETIC CASES",
+      "text": "40/40 labeled synthetic rule checks pass in the browser — the same engine file the Node regression suite runs.",
+      "end": 124.51
+    },
+    {
+      "start": 124.51,
+      "label": "EVIDENCE LAB · 40 SYNTHETIC CASES",
+      "text": "21 constructed cases hide a caution or stop from a ground-only wind screen. Constructed examples — not field accuracy.",
+      "end": 140.01
+    },
+    {
+      "start": 140.01,
+      "label": "EVIDENCE LAB · 40 SYNTHETIC CASES",
+      "text": "Load any case: the live dashboard, twin and log update together.",
+      "end": 152.309
+    },
+    {
+      "start": 152.309,
+      "label": "DECISION LOG · BROWSER-LOCAL",
+      "text": "Every decision is timestamped with its readings, reasons and data source — scenarios, replay and benchmark loads included.",
+      "end": 157.341
+    },
+    {
+      "start": 157.341,
+      "label": "DECISION LOG · BROWSER-LOCAL",
+      "text": "CSV / JSON export in UTC. Local records — not a regulatory or tamper-evident record.",
+      "end": 163.688
+    },
+    {
+      "start": 163.688,
+      "label": "CANOPYGUARD 2.1",
+      "text": "See the inversion a ground station misses — explained, logged, exportable. Weather screening only; labels and on-site checks still govern.",
+      "end": 170.004
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "failedRequests": []
+}

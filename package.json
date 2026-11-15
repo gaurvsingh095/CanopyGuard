@@ -1,0 +1,21 @@
+{
+  "name": "canopyguard",
+  "version": "2.1.0",
+  "description": "CanopyGuard — two-height orchard spray-drift weather screening prototype (Hack Arizona AgX)",
+  "scripts": {
+    "build": "node tools/build.cjs",
+    "check:build": "node tools/build.cjs --check",
+    "test:engine": "node validate-engine.cjs && node tests/engine-edge.test.cjs",
+    "test:e2e": "node tests/e2e.cjs",
+    "test": "npm run check:build && npm run test:engine && npm run test:e2e"
+  },
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/manrope": "^5.3.0",
+    "axe-core": "^4.14.0",
+    "playwright": "^1.65.1",
+    "prettier": "^3.10.1"
+  },
+  "private": true
+}
