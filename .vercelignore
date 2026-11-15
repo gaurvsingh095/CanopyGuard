@@ -1,0 +1,10 @@
+node_modules
+qa
+tests
+tools
+demo
+docs
+src
+*.md
+package*.json
+validate-engine.cjs
